@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
     :root {
       --bg: #f4f7fa;
@@ -21,6 +23,9 @@
       --detail-border: #c7d2fe;
       --danger: #b91c1c;
       --danger-light: #fee2e2;
+      --warn-bg: #fef9c3;
+      --warn-text: #854d0e;
+      --warn-border: #fde047;
       --open-bg: #dcfce7;
       --open-text: #15803d;
       --closed-bg: #e2e8f0;
@@ -228,6 +233,11 @@
 
     button:hover {
       opacity: 0.92;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
     }
 
     .btn-primary {
@@ -567,6 +577,10 @@
       box-shadow: 0 22px 48px rgba(15, 23, 42, 0.25);
     }
 
+    .modal-lg {
+      max-width: 1060px;
+    }
+
     .modal-sm {
       max-width: 440px;
     }
@@ -661,6 +675,137 @@
       color: var(--text);
     }
 
+    /* Khu vực NHẬP NHANH ĐƠN TUYỂN */
+    .quick-import-box {
+      border: 1px solid #bae6fd;
+      background: #f0f9ff;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .quick-import-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #0369a1;
+      margin-bottom: 8px;
+    }
+
+    .dropzone-area {
+      border: 2px dashed #0284c7;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      margin-bottom: 10px;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .dropzone-area.drag-over {
+      background: #e0f2fe;
+      border-color: #0f766e;
+    }
+
+    .dropzone-hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .selected-files-list {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .file-pill {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 0.76rem;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .quick-import-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+    }
+
+    .draft-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .draft-card-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .badge-warn {
+      background: var(--warn-bg);
+      color: var(--warn-text);
+      border: 1px solid var(--warn-border);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .badge-ok {
+      background: var(--open-bg);
+      color: var(--open-text);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .draft-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .draft-field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 3px;
+    }
+
+    .draft-field input,
+    .draft-field select,
+    .draft-field textarea {
+      width: 100%;
+      padding: 6px 8px;
+      font-size: 0.8rem;
+    }
+
+    .draft-field input.needs-check,
+    .draft-field textarea.needs-check {
+      border-color: #eab308;
+      background: #fefce8;
+    }
+
     .toast {
       display: none;
       position: fixed;
@@ -682,6 +827,9 @@
       .filters {
         grid-template-columns: 1fr 1fr;
       }
+      .draft-grid {
+        grid-template-columns: 1fr 1fr;
+      }
       .header-right {
         align-items: stretch;
         width: 100%;
@@ -701,7 +849,8 @@
       }
       .filters,
       .grid,
-      .form-grid-2 {
+      .form-grid-2,
+      .draft-grid {
         grid-template-columns: 1fr;
       }
       .card-actions-row {
@@ -858,7 +1007,7 @@
   </div>
 
   <div id="updateManagerModal" class="modal-backdrop" onclick="handleBackdropClick(event, 'updateManagerModal')">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="updateModalTitle">
+    <div class="modal modal-lg" role="dialog" aria-modal="true" aria-labelledby="updateModalTitle">
       <div class="modal-head">
         <div>
           <div class="modal-brand">Minami Kyujn Share</div>
@@ -866,6 +1015,47 @@
         </div>
         <button type="button" id="closeUpdateManagerBtn" class="btn-secondary" onclick="closeModal('updateManagerModal')"></button>
       </div>
+
+      <!-- KHU VỰC NHẬP NHANH ĐƠN TUYỂN -->
+      <section id="quickImportSection" class="quick-import-box" aria-label="Nhập nhanh đơn tuyển">
+        <div class="quick-import-title">📥 NHẬP NHANH ĐƠN TUYỂN</div>
+
+        <div id="importDropzone" class="dropzone-area"
+             ondragover="handleImportDragOver(event)"
+             ondragleave="handleImportDragLeave(event)"
+             ondrop="handleImportDrop(event)">
+          <div style="font-weight:700;font-size:0.88rem;color:#0f172a;">
+            Kéo thả nhiều file vào đây (JPG, JPEG, PNG, WEBP, XLS, XLSX, CSV, PDF, DOC, DOCX, TXT)
+          </div>
+          <div class="dropzone-hint">
+            Không suy diễn dữ liệu; dữ liệu thiếu để trống; mục chưa rõ được đánh dấu cần kiểm tra trước khi bấm UPDATE.
+          </div>
+          <input id="quickImportFileInput" type="file" multiple
+                 accept=".jpg,.jpeg,.png,.webp,.xls,.xlsx,.csv,.pdf,.doc,.docx,.txt,image/*,text/plain,text/csv"
+                 style="display:none;" onchange="handleFileInputChange(event)" />
+          <div id="selectedImportFilesList" class="selected-files-list"></div>
+        </div>
+
+        <div class="form-field" style="margin-bottom:8px;">
+          <label for="quickImportRawText">Hoặc dán nội dung văn bản / tin nhắn / dữ liệu bảng đơn tuyển:</label>
+          <textarea id="quickImportRawText" rows="4" placeholder="Dán nội dung đơn tuyển (tiếng Việt hoặc tiếng Nhật) tại đây..."></textarea>
+        </div>
+
+        <div class="quick-import-actions">
+          <button type="button" id="btnChooseImportFiles" class="btn-secondary" onclick="document.getElementById('quickImportFileInput').click()">Chọn file</button>
+          <button type="button" id="btnProcessImportFiles" class="btn-primary" onclick="processImportedSources()">Xử lý dữ liệu</button>
+          <button type="button" id="btnCheckImportDrafts" class="btn-detail" onclick="inspectExtractedDrafts()">Kiểm tra nội dung</button>
+          <button type="button" id="btnCommitImportDrafts" class="btn-update" onclick="commitExtractedDrafts()">UPDATE</button>
+          <button type="button" class="btn-danger-sm" onclick="clearImportDrafts()">Xóa nháp</button>
+        </div>
+
+        <div id="importStatusLog" class="helper-box" style="margin-bottom:8px;">
+          Sẵn sàng nhận file hoặc văn bản đơn tuyển.
+        </div>
+
+        <div id="extractedDraftsContainer"></div>
+      </section>
+
       <div class="helper-box" id="updateGuideHint"></div>
       <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
         <button type="button" id="openAddFromManagerBtn" class="btn-primary" onclick="openEditorModal()"></button>
@@ -992,6 +1182,7 @@
 
     const DEFAULT_ADMIN_PASSCODE = "MINAMI2026";
     const STORAGE_JOBS_KEY = "MINAMI_KYUJIN_JOBS_V1";
+    const STORAGE_BACKUP_JOBS_KEY = "MINAMI_KYUJIN_JOBS_BACKUP_V1";
     const STORAGE_PASS_KEY = "MINAMI_KYUJIN_ADMIN_PASS_V1";
 
     function isSupabaseConfigured() {
@@ -1780,8 +1971,15 @@
       return cloneJobs(INITIAL_JOBS);
     }
 
+    function saveBackupJobs(snapshotList) {
+      try {
+        localStorage.setItem(STORAGE_BACKUP_JOBS_KEY, JSON.stringify(snapshotList || JOBS));
+      } catch (e) {}
+    }
+
     function saveCachedJobs() {
       try {
+        saveBackupJobs(JOBS);
         localStorage.setItem(STORAGE_JOBS_KEY, JSON.stringify(JOBS));
       } catch (e) {}
     }
@@ -1793,6 +1991,10 @@
     let selectedLocation = { type: "all", value: "" };
     let expandedRegions = { kanto: true, kansai: true };
     let activeDetailJob = null;
+
+    // Trạng thái Nhập nhanh đơn tuyển
+    let pendingImportFiles = [];
+    let extractedDrafts = [];
 
     function t() {
       return UI_TEXT[currentLang] || UI_TEXT.vi;
@@ -1925,6 +2127,7 @@
       renderJobs();
       if (isAdminVerified && document.getElementById("updateManagerModal").classList.contains("show")) {
         renderUpdateManagerList();
+        renderExtractedDrafts();
       }
       if (activeDetailJob && document.getElementById("detailModal").classList.contains("show")) {
         openDetailModal(activeDetailJob.code);
@@ -2550,6 +2753,7 @@
         ? "初期求人データに復元しますか？（現在の追加・編集内容は上書きされます）"
         : "Khôi phục dữ liệu đơn tuyển gốc? (Các thay đổi hiện tại sẽ được ghi đè)";
       if (!window.confirm(confirmMsg)) return;
+      saveBackupJobs(JOBS);
       JOBS = cloneJobs(INITIAL_JOBS);
       saveCachedJobs();
       try {
@@ -2569,6 +2773,8 @@
         return;
       }
       renderUpdateManagerList();
+      renderSelectedImportFiles();
+      renderExtractedDrafts();
       document.getElementById("updateManagerModal").classList.add("show");
     }
 
@@ -2751,6 +2957,782 @@
       } catch (e) {
         showToast(t().cloudSyncErrorToast);
       }
+    }
+
+    /* ============================================================
+       CHỨC NĂNG NHẬP NHANH ĐƠN TUYỂN BẰNG FILE / VĂN BẢN
+       ============================================================ */
+
+    function setImportStatus(msg) {
+      const el = document.getElementById("importStatusLog");
+      if (el) el.textContent = msg;
+    }
+
+    function handleImportDragOver(event) {
+      event.preventDefault();
+      document.getElementById("importDropzone")?.classList.add("drag-over");
+    }
+
+    function handleImportDragLeave() {
+      document.getElementById("importDropzone")?.classList.remove("drag-over");
+    }
+
+    function handleImportDrop(event) {
+      event.preventDefault();
+      document.getElementById("importDropzone")?.classList.remove("drag-over");
+      const files = Array.from(event.dataTransfer?.files || []);
+      if (files.length) addSelectedImportFiles(files);
+    }
+
+    function handleFileInputChange(event) {
+      const files = Array.from(event.target?.files || []);
+      if (files.length) addSelectedImportFiles(files);
+      event.target.value = "";
+    }
+
+    function addSelectedImportFiles(files) {
+      const allowedExt = /\.(jpg|jpeg|png|webp|xls|xlsx|csv|pdf|doc|docx|txt)$/i;
+      let added = 0;
+      files.forEach(f => {
+        if (allowedExt.test(f.name) || f.type.startsWith("image/") || f.type.startsWith("text/")) {
+          pendingImportFiles.push(f);
+          added++;
+        }
+      });
+      renderSelectedImportFiles();
+      if (added > 0) {
+        setImportStatus(`Đã thêm ${added} file (tổng ${pendingImportFiles.length} file sẵn sàng xử lý). Nhấn "Xử lý dữ liệu".`);
+      } else {
+        setImportStatus("Định dạng file chưa được hỗ trợ. Hỗ trợ: JPG, JPEG, PNG, WEBP, XLS, XLSX, CSV, PDF, DOC, DOCX, TXT.");
+      }
+    }
+
+    function removeSelectedImportFile(idx) {
+      pendingImportFiles.splice(idx, 1);
+      renderSelectedImportFiles();
+    }
+
+    function renderSelectedImportFiles() {
+      const container = document.getElementById("selectedImportFilesList");
+      if (!container) return;
+      if (!pendingImportFiles.length) {
+        container.innerHTML = "";
+        return;
+      }
+      container.innerHTML = pendingImportFiles.map((f, idx) => `
+        <span class="file-pill">
+          <span>${escapeHtml(f.name)}</span>
+          <button type="button" style="border:none;background:transparent;padding:0 2px;color:#b91c1c;" onclick="removeSelectedImportFile(${idx})" aria-label="Remove file">×</button>
+        </span>
+      `).join("");
+    }
+
+    async function extractTextFromDocx(file) {
+      const buf = await file.arrayBuffer();
+      const bytes = new Uint8Array(buf);
+      const rawStr = new TextDecoder("latin1").decode(bytes);
+      const xmlMatches = [...rawStr.matchAll(/<w:t[^>]*>([\s\S]*?)<\/w:t>/g)].map(m => m[1]);
+      if (xmlMatches.length) {
+        return xmlMatches
+          .join(" ")
+          .replace(/&amp;/g, "&")
+          .replace(/&lt;/g, "<")
+          .replace(/&gt;/g, ">")
+          .replace(/&quot;/g, "\"")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+      const plain = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+      return plain.replace(/[^\x20-\x7E\u3000-\u9FFF\u00C0-\u1EF9\r\n]+/g, " ").trim();
+    }
+
+    async function extractTextFromPdf(file) {
+      const buf = await file.arrayBuffer();
+      const bytes = new Uint8Array(buf);
+      const latin = new TextDecoder("latin1").decode(bytes);
+      const textChunks = [];
+
+      const parenMatches = latin.matchAll(/\(([^()\\]{2,200})\)/g);
+      for (const m of parenMatches) {
+        const cleaned = m[1]
+          .replace(/\\n/g, "\n")
+          .replace(/\\r/g, " ")
+          .replace(/\\\(/g, "(")
+          .replace(/\\\)/g, ")")
+          .trim();
+        if (/[A-Za-z0-9\u3040-\u30FF\u4E00-\u9FFF\u00C0-\u1EF9]/.test(cleaned)) {
+          textChunks.push(cleaned);
+        }
+      }
+
+      const extracted = textChunks.join("\n").replace(/\n{2,}/g, "\n").trim();
+      if (extracted.length >= 25) {
+        return extracted;
+      }
+
+      // PDF dạng ảnh (scan) không có lớp văn bản rõ ràng -> yêu cầu OCR ảnh hoặc kiểm tra thủ công
+      return "";
+    }
+
+    async function extractTextFromSpreadsheet(file) {
+      const ext = file.name.split(".").pop().toLowerCase();
+      if (ext === "csv") {
+        return await file.text();
+      }
+      if (typeof window.XLSX === "undefined") {
+        throw new Error("Thiếu thư viện đọc Excel (XLSX)");
+      }
+      const data = await file.arrayBuffer();
+      const wb = window.XLSX.read(data, { type: "array" });
+      const lines = [];
+      wb.SheetNames.forEach(sheetName => {
+        const ws = wb.Sheets[sheetName];
+        const rows = window.XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
+        rows.forEach(row => {
+          const nonEmpty = row.map(c => String(c ?? "").trim()).filter(Boolean);
+          if (nonEmpty.length) {
+            lines.push(nonEmpty.join(" : "));
+          }
+        });
+      });
+      return lines.join("\n");
+    }
+
+    async function extractTextFromImageOcr(file) {
+      if (!window.Tesseract || typeof window.Tesseract.recognize !== "function") {
+        throw new Error("Không khả dụng OCR trên trình duyệt");
+      }
+      const res = await window.Tesseract.recognize(file, "jpn+vie+eng", {
+        logger: m => {
+          if (m.status === "recognizing text" && typeof m.progress === "number") {
+            setImportStatus(`Đang OCR ảnh "${file.name}": ${Math.round(m.progress * 100)}%...`);
+          }
+        }
+      });
+      return String(res?.data?.text || "").trim();
+    }
+
+    async function readSingleImportFile(file) {
+      const ext = (file.name.split(".").pop() || "").toLowerCase();
+      if (ext === "txt" || file.type === "text/plain") {
+        return await file.text();
+      }
+      if (["csv", "xls", "xlsx"].includes(ext)) {
+        return await extractTextFromSpreadsheet(file);
+      }
+      if (ext === "docx") {
+        return await extractTextFromDocx(file);
+      }
+      if (ext === "doc") {
+        const raw = await file.text();
+        return raw.replace(/<[^>]+>/g, " ").replace(/[^\x20-\x7E\u3000-\u9FFF\u00C0-\u1EF9\r\n]+/g, " ").trim();
+      }
+      if (ext === "pdf") {
+        const pdfText = await extractTextFromPdf(file);
+        if (!pdfText) {
+          return `[Cần kiểm tra] File PDF "${file.name}" có thể là tài liệu scan/hình ảnh; hãy xuất ảnh PNG/JPG để OCR hoặc nhập nội dung vào ô bên dưới.`;
+        }
+        return pdfText;
+      }
+      if (["jpg", "jpeg", "png", "webp"].includes(ext) || file.type.startsWith("image/")) {
+        return await extractTextFromImageOcr(file);
+      }
+      return await file.text();
+    }
+
+    function detectPrefectureKey(text) {
+      const blob = String(text || "");
+      for (const reg of REGIONS) {
+        for (const p of reg.prefs) {
+          const re = new RegExp(`(^|[^a-zA-Z])${p.key}([^a-zA-Z]|$)`, "i");
+          if (re.test(blob) || (p.ja && blob.includes(p.ja))) {
+            return p.key;
+          }
+        }
+      }
+      return "";
+    }
+
+    function detectIndustryKey(text) {
+      const blob = String(text || "").toLowerCase();
+      const all = getAllIndustries();
+      for (const item of all) {
+        if (item.key && blob.includes(item.key.toLowerCase())) return item.key;
+        if (item.ja && blob.includes(item.ja.toLowerCase())) return item.key;
+      }
+      if (/điều dưỡng|介護|kaigo|dưỡng lão/i.test(blob)) return "Kaigo";
+      if (/nhà hàng|外食|ẩm thực|nấu ăn/i.test(blob)) return "Nhà hàng";
+      if (/xây dựng|建設|giàn giáo|cốt thép|máy xúc/i.test(blob)) return "Xây dựng";
+      if (/thực phẩm|食品|chế biến|cơm hộp/i.test(blob)) return "Chế biến thực phẩm";
+      if (/cơ khí|機械|gia công|hàn|tiện|phay/i.test(blob)) return "Gia công cơ khí";
+      if (/khách sạn|宿泊|dọn phòng/i.test(blob)) return "Khách sạn";
+      if (/vệ sinh|ビルクリーニング/i.test(blob)) return "Vệ sinh tòa nhà";
+      return "";
+    }
+
+    function detectCategoryType(text, industryKey) {
+      const blob = String(text || "").toLowerCase();
+      if (/kỹ sư|技人国|技術・人文知識・国際業務|エンジニア|engineer/i.test(blob)) {
+        return "engineer";
+      }
+      if (ENGINEER_GROUPS.some(g => g.items.some(i => i.key === industryKey))) {
+        return "engineer";
+      }
+      return "tokutei";
+    }
+
+    function extractFieldByPatterns(lines, patterns) {
+      for (const line of lines) {
+        for (const pat of patterns) {
+          const match = line.match(pat);
+          if (match && match[1]) {
+            const val = match[1].replace(/^[:：\-\s]+/, "").trim();
+            if (val) return val;
+          }
+        }
+      }
+      return "";
+    }
+
+    function parseJobDraftFromText(sourceLabel, rawText) {
+      const cleanRaw = String(rawText || "").replace(/\r\n/g, "\n").trim();
+      const lines = cleanRaw.split("\n").map(l => l.trim()).filter(Boolean);
+
+      const codeMatch = extractFieldByPatterns(lines, [
+        /(?:mã\s*(?:đơn|id)|求人\s*id|求人番号|id\s*đơn|code)\s*[:：]?\s*(.+)/i,
+        /(特定技能\s*\d+|技人国\s*\d+|\b[A-Z]{2,6}[-_]?\d+[A-Za-z0-9-]*)/i
+      ]);
+
+      const title = extractFieldByPatterns(lines, [
+        /(?:tiêu đề|tên đơn|求人名|職種名|vị trí)\s*[:：]?\s*(.+)/i
+      ]) || (lines[0] && lines[0].length <= 120 ? lines[0] : "");
+
+      const workplace = extractFieldByPatterns(lines, [
+        /(?:địa chỉ|nơi làm việc|勤務地|勤務先|địa điểm)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const jobDesc = extractFieldByPatterns(lines, [
+        /(?:nội dung công việc|công việc|業務内容|仕事内容)\s*[:：]?\s*(.+)/i
+      ]) || title;
+
+      const visa = extractFieldByPatterns(lines, [
+        /(?:tư cách lưu trú|在留資格)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const nationality = extractFieldByPatterns(lines, [
+        /(?:quốc tịch|国籍)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const gender = extractFieldByPatterns(lines, [
+        /(?:giới tính|性別)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const headcount = extractFieldByPatterns(lines, [
+        /(?:số lượng|採用人数|募集人数)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const japanese = extractFieldByPatterns(lines, [
+        /(?:tiếng nhật|trình độ tiếng nhật|日本語|日本語能力)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const baseSalary = extractFieldByPatterns(lines, [
+        /(?:lương cơ bản|基本給)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const totalSalary = extractFieldByPatterns(lines, [
+        /(?:tổng lương|lương tháng|lương|月給|給与)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const takeHomeSalary = extractFieldByPatterns(lines, [
+        /(?:lương thực nhận|thực lĩnh|手取り)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const bonus = extractFieldByPatterns(lines, [
+        /(?:thưởng|賞与)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const raise = extractFieldByPatterns(lines, [
+        /(?:tăng lương|昇給)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const allowance = extractFieldByPatterns(lines, [
+        /(?:trợ cấp|phụ cấp|手当)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const overtime = extractFieldByPatterns(lines, [
+        /(?:tăng ca|làm thêm|残業)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const housing = extractFieldByPatterns(lines, [
+        /(?:nhà ở|ký túc xá|住居|寮|社宅)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const workTime = extractFieldByPatterns(lines, [
+        /(?:thời gian làm việc|ca làm việc|勤務時間)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const dayOff = extractFieldByPatterns(lines, [
+        /(?:ngày nghỉ|休日)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const requirement = extractFieldByPatterns(lines, [
+        /(?:điều kiện ứng tuyển|kinh nghiệm|yêu cầu|応募条件|経験|資格)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const extraNote = extractFieldByPatterns(lines, [
+        /(?:ghi chú|note|備考|bổ sung)\s*[:：]?\s*(.+)/i
+      ]);
+
+      const detectedPref = detectPrefectureKey(`${workplace} ${cleanRaw}`);
+      const detectedInd = detectIndustryKey(`${title} ${jobDesc} ${cleanRaw}`);
+      const categoryType = detectCategoryType(`${title} ${jobDesc} ${visa} ${cleanRaw}`, detectedInd);
+
+      const salaryCombined = totalSalary || baseSalary || takeHomeSalary || "";
+      const shiftCombined = [workTime, dayOff].filter(Boolean).join(" | ");
+      const notesCombined = [
+        visa ? `Visa: ${visa}` : "",
+        baseSalary && totalSalary ? `Lương CB: ${baseSalary}` : "",
+        takeHomeSalary ? `Thực nhận: ${takeHomeSalary}` : "",
+        allowance ? `Trợ cấp: ${allowance}` : "",
+        extraNote
+      ].filter(Boolean).join(" | ");
+
+      const needsCheck = cleanRaw.includes("[Cần kiểm tra]") || !codeMatch || !title || !detectedInd || !detectedPref || !salaryCombined;
+
+      const codeValue = codeMatch || `[Cần kiểm tra] ${sourceLabel.replace(/\.[^.]+$/, "")}`;
+      const generatedId = `${makeJobId({
+        code: codeMatch || `auto-${Date.now()}`,
+        prefecture: detectedPref || "jp",
+        industry: detectedInd || "gen"
+      })}`;
+
+      return {
+        tempId: `draft-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        sourceLabel,
+        needsCheck,
+        duplicateAction: "update",
+        job: {
+          id: generatedId,
+          code: codeValue,
+          categoryType,
+          status: "Đang tuyển",
+          company: "Minami Kyujn Share",
+          industry: detectedInd || "Khác",
+          prefecture: detectedPref || "Tokyo",
+          link: "",
+          i18n: {
+            vi: {
+              title: title || "",
+              workplace: workplace || "",
+              jobDesc: jobDesc || "",
+              nationality: nationality || "",
+              gender: gender || "",
+              japanese: japanese || "",
+              experience: requirement || "",
+              headcount: headcount || "",
+              salary: salaryCombined || "",
+              bonus: bonus || "",
+              raise: raise || "",
+              overtime: overtime || "",
+              housing: housing || "",
+              shift: shiftCombined || "",
+              note: notesCombined || ""
+            },
+            ja: {
+              title: title || "",
+              workplace: workplace || "",
+              jobDesc: jobDesc || "",
+              nationality: nationality || "",
+              gender: gender || "",
+              japanese: japanese || "",
+              experience: requirement || "",
+              headcount: headcount || "",
+              salary: salaryCombined || "",
+              bonus: bonus || "",
+              raise: raise || "",
+              overtime: overtime || "",
+              housing: housing || "",
+              shift: shiftCombined || "",
+              note: notesCombined || ""
+            }
+          }
+        }
+      };
+    }
+
+    async function processImportedSources() {
+      if (!isAdminVerified) {
+        showToast(t().adminWrongPassToast);
+        return;
+      }
+
+      const rawTextarea = document.getElementById("quickImportRawText")?.value.trim() || "";
+      if (!pendingImportFiles.length && !rawTextarea) {
+        setImportStatus("Vui lòng kéo thả hoặc chọn ít nhất 1 file, hoặc dán nội dung đơn tuyển trước khi bấm Xử lý dữ liệu.");
+        return;
+      }
+
+      const btnProcess = document.getElementById("btnProcessImportFiles");
+      if (btnProcess) btnProcess.disabled = true;
+
+      try {
+        const newDrafts = [];
+
+        // Xử lý từng file riêng biệt để không trộn lẫn thông tin giữa các file
+        for (let i = 0; i < pendingImportFiles.length; i++) {
+          const file = pendingImportFiles[i];
+          setImportStatus(`Đang đọc file ${i + 1}/${pendingImportFiles.length}: "${file.name}"...`);
+          const content = await readSingleImportFile(file);
+          newDrafts.push(parseJobDraftFromText(file.name, content));
+        }
+
+        // Xử lý phần văn bản dán tay nếu có
+        if (rawTextarea) {
+          const blocks = rawTextarea.split(/\n\s*---+\s*\n/).map(b => b.trim()).filter(Boolean);
+          blocks.forEach((blk, idx) => {
+            const label = blocks.length > 1 ? `Văn bản #${idx + 1}` : "Văn bản nhập tay";
+            newDrafts.push(parseJobDraftFromText(label, blk));
+          });
+        }
+
+        extractedDrafts = extractedDrafts.concat(newDrafts);
+        pendingImportFiles = [];
+        renderSelectedImportFiles();
+        renderExtractedDrafts();
+
+        const checkCount = extractedDrafts.filter(d => d.needsCheck).length;
+        setImportStatus(
+          `Đã xử lý xong ${newDrafts.length} nguồn (tổng ${extractedDrafts.length} bản nháp; ${checkCount} bản nháp có mục cần kiểm tra). Hãy kiểm tra và bấm UPDATE để lưu.`
+        );
+      } catch (err) {
+        setImportStatus(`Lỗi khi đọc/trích xuất dữ liệu: ${err?.message || "Không xác định"}`);
+      } finally {
+        if (btnProcess) btnProcess.disabled = false;
+      }
+    }
+
+    function findExistingJobForDraft(draftJob) {
+      const normCode = String(draftJob.code || "").replace(/^\[Cần kiểm tra\]\s*/i, "").trim().toLowerCase();
+      return JOBS.find(existing => {
+        if (existing.id && draftJob.id && existing.id === draftJob.id) return true;
+        const exCode = String(existing.code || "").trim().toLowerCase();
+        return normCode && exCode && exCode === normCode;
+      }) || null;
+    }
+
+    function inspectExtractedDrafts() {
+      if (!extractedDrafts.length) {
+        setImportStatus("Chưa có dữ liệu nháp nào để kiểm tra. Hãy chọn file hoặc dán nội dung rồi bấm Xử lý dữ liệu.");
+        return;
+      }
+
+      let unclearCount = 0;
+      let dupCount = 0;
+
+      extractedDrafts.forEach(draft => {
+        const j = draft.job;
+        const d = j.i18n?.[currentLang] || j.i18n?.vi || {};
+        const missingCritical =
+          !String(j.code || "").trim() ||
+          String(j.code || "").includes("[Cần kiểm tra]") ||
+          !String(d.title || "").trim() ||
+          !String(j.industry || "").trim() ||
+          !String(j.prefecture || "").trim() ||
+          !String(d.salary || "").trim() ||
+          String(d.title || "").includes("[Cần kiểm tra]");
+
+        draft.needsCheck = missingCritical;
+        if (draft.needsCheck) unclearCount++;
+        if (findExistingJobForDraft(j)) dupCount++;
+      });
+
+      renderExtractedDrafts();
+      setImportStatus(
+        `Kết quả kiểm tra: ${extractedDrafts.length} đơn nháp | ${unclearCount} đơn cần kiểm tra/bổ sung | ${dupCount} đơn trùng mã ID hiện có.`
+      );
+    }
+
+    function updateDraftField(draftIndex, fieldPath, value) {
+      const draft = extractedDrafts[draftIndex];
+      if (!draft) return;
+      if (fieldPath === "code") {
+        draft.job.code = value;
+        draft.job.id = makeJobId(draft.job);
+      } else if (fieldPath === "categoryType") {
+        draft.job.categoryType = value === "engineer" ? "engineer" : "tokutei";
+      } else if (fieldPath === "industry") {
+        draft.job.industry = value;
+      } else if (fieldPath === "prefecture") {
+        draft.job.prefecture = value;
+      } else if (fieldPath === "status") {
+        draft.job.status = value === "Đóng đơn" ? "Đóng đơn" : "Đang tuyển";
+      } else if (fieldPath === "duplicateAction") {
+        draft.duplicateAction = value === "skip" ? "skip" : "update";
+      } else {
+        draft.job.i18n.vi = draft.job.i18n.vi || {};
+        draft.job.i18n.ja = draft.job.i18n.ja || {};
+        draft.job.i18n.vi[fieldPath] = value;
+        draft.job.i18n.ja[fieldPath] = value;
+      }
+    }
+
+    function removeDraftItem(draftIndex) {
+      extractedDrafts.splice(draftIndex, 1);
+      renderExtractedDrafts();
+      setImportStatus(`Đã xóa 1 đơn nháp. Còn ${extractedDrafts.length} đơn nháp.`);
+    }
+
+    function clearImportDrafts() {
+      extractedDrafts = [];
+      pendingImportFiles = [];
+      const ta = document.getElementById("quickImportRawText");
+      if (ta) ta.value = "";
+      renderSelectedImportFiles();
+      renderExtractedDrafts();
+      setImportStatus("Đã xóa toàn bộ dữ liệu nháp.");
+    }
+
+    function renderExtractedDrafts() {
+      const container = document.getElementById("extractedDraftsContainer");
+      if (!container) return;
+      if (!extractedDrafts.length) {
+        container.innerHTML = "";
+        return;
+      }
+
+      const allPrefs = [];
+      REGIONS.forEach(reg => reg.prefs.forEach(p => allPrefs.push(p)));
+      const allIndustries = getAllIndustries();
+
+      container.innerHTML = extractedDrafts.map((draft, idx) => {
+        const j = draft.job;
+        const d = j.i18n?.[currentLang] || j.i18n?.vi || {};
+        const dup = findExistingJobForDraft(j);
+
+        return `
+          <div class="draft-card">
+            <div class="draft-card-head">
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;">
+                <strong>${escapeHtml(draft.sourceLabel)}</strong>
+                ${draft.needsCheck
+                  ? `<span class="badge-warn">Cần kiểm tra</span>`
+                  : `<span class="badge-ok">Đã sẵn sàng</span>`}
+                ${dup
+                  ? `<span class="badge-warn">Trùng mã: ${escapeHtml(dup.code)}</span>`
+                  : ""}
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                ${dup ? `
+                  <select aria-label="Xử lý trùng" onchange="updateDraftField(${idx}, 'duplicateAction', this.value)" style="padding:4px 8px;font-size:0.78rem;">
+                    <option value="update" ${draft.duplicateAction !== "skip" ? "selected" : ""}>Cập nhật đơn cũ</option>
+                    <option value="skip" ${draft.duplicateAction === "skip" ? "selected" : ""}>Bỏ qua</option>
+                  </select>
+                ` : ""}
+                <button type="button" class="btn-danger-sm" onclick="removeDraftItem(${idx})">Xóa đơn này</button>
+              </div>
+            </div>
+
+            <div class="draft-grid">
+              <div class="draft-field">
+                <label>Mã đơn tuyển / 求人ID</label>
+                <input type="text" class="${!j.code || String(j.code).includes('[Cần kiểm tra]') ? "needs-check" : ""}"
+                       value="${escapeAttr(j.code)}" onchange="updateDraftField(${idx}, 'code', this.value)" />
+              </div>
+
+              <div class="draft-field">
+                <label>Phân loại</label>
+                <select onchange="updateDraftField(${idx}, 'categoryType', this.value)">
+                  <option value="tokutei" ${j.categoryType !== "engineer" ? "selected" : ""}>Tokutei Gino</option>
+                  <option value="engineer" ${j.categoryType === "engineer" ? "selected" : ""}>Kỹ sư</option>
+                </select>
+              </div>
+
+              <div class="draft-field">
+                <label>Ngành nghề / 職種</label>
+                <select onchange="updateDraftField(${idx}, 'industry', this.value)">
+                  ${allIndustries.map(it => `<option value="${escapeAttr(it.key)}" ${j.industry === it.key ? "selected" : ""}>${escapeHtml(getIndustryLabel(it.key))}</option>`).join("")}
+                </select>
+              </div>
+
+              <div class="draft-field">
+                <label>Tỉnh thành / 勤務地</label>
+                <select onchange="updateDraftField(${idx}, 'prefecture', this.value)">
+                  ${allPrefs.map(p => `<option value="${escapeAttr(p.key)}" ${j.prefecture === p.key ? "selected" : ""}>${escapeHtml(getPrefLabel(p.key))} (${escapeHtml(p.ja)})</option>`).join("")}
+                </select>
+              </div>
+
+              <div class="draft-field">
+                <label>Tiêu đề tuyển dụng</label>
+                <input type="text" class="${!d.title ? "needs-check" : ""}"
+                       value="${escapeAttr(d.title || "")}" onchange="updateDraftField(${idx}, 'title', this.value)" />
+              </div>
+
+              <div class="draft-field">
+                <label>Địa chỉ / Nơi làm việc</label>
+                <input type="text" value="${escapeAttr(d.workplace || "")}" onchange="updateDraftField(${idx}, 'workplace', this.value)" />
+              </div>
+
+              <div class="draft-field">
+                <label>Nội dung công việc / 業務内容</label>
+                <input type="text" value="${escapeAttr(d.jobDesc || "")}" onchange="updateDraftField(${idx}, 'jobDesc', this.value)" />
+              </div>
+
+              <div class="draft-field">
+                <label>Quốc tịch / 国籍</label>
+                <input type="text" value="${escapeAttr(d.nationality || "")}" onchange="updateDraftField(${idx}, 'nationality', this.value)" />
+              </div>
+
+              <div class="draft-field">
+                <label>Giới tính / 性別</label>
+                <input type="text" value="${escapeAttr(d.gender || "")}" onchange="updateDraftField(${idx}, 'gender', this.value)" />
+              </div>
+
+              <div class="draft-field">
+                <label>Số lượng tuyển / 採用人数</label>
+                <input type="text" value="${escapeAttr(d.headcount || "")}" onchange="updateDraftField(${idx}, 'headcount', this.value)" />
+              </div>
+
+              <div class="draft-field">
+                <label>Trình độ tiếng Nhật / 日本語能力</label>
+                <input type="text" value="${escapeAttr(d.japanese || "")}" onchange="updateDraftField(${idx}, 'japanese', this.value)" />
+              </div>
+
+              <div class="draft-field">
+                <label>Lương / 月給</label>
+                <input type="text" class="${!d.salary ? "needs-check" : ""}"
+                       value="${escapeAttr(d.salary || "")}" onchange="updateDraftField(${idx}, 'salary', this.value)" />
+              </div>
+
+              <div class="draft-field">
+                <label>Thưởng / 賞与</label>
+                <input type="text" value="${escapeAttr(d.bonus || "")}" onchange="updateDraftField(${idx}, 'bonus', this.value)" />
+              </div>
+
+              <div class="draft-field">
+                <label>Tăng lương / 昇給</label>
+                <input type="text" value="${escapeAttr(d.raise || "")}" onchange="updateDraftField(${idx}, 'raise', this.value)" />
+              </div>
+
+              <div class="draft-field">
+                <label>Tăng ca / 残業</label>
+                <input type="text" value="${escapeAttr(d.overtime || "")}" onchange="updateDraftField(${idx}, 'overtime', this.value)" />
+              </div>
+
+              <div class="draft-field">
+                <label>Nhà ở / 住居</label>
+                <input type="text" value="${escapeAttr(d.housing || "")}" onchange="updateDraftField(${idx}, 'housing', this.value)" />
+              </div>
+
+              <div class="draft-field">
+                <label>Thời gian làm việc &amp; Ngày nghỉ</label>
+                <input type="text" value="${escapeAttr(d.shift || "")}" onchange="updateDraftField(${idx}, 'shift', this.value)" />
+              </div>
+
+              <div class="draft-field">
+                <label>Điều kiện &amp; Kinh nghiệm</label>
+                <input type="text" value="${escapeAttr(d.experience || "")}" onchange="updateDraftField(${idx}, 'experience', this.value)" />
+              </div>
+
+              <div class="draft-field" style="grid-column: 1 / -1;">
+                <label>Thông tin bổ sung / Ghi chú / 備考</label>
+                <input type="text" value="${escapeAttr(d.note || "")}" onchange="updateDraftField(${idx}, 'note', this.value)" />
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function commitExtractedDrafts() {
+      if (!isAdminVerified) {
+        showToast(t().adminWrongPassToast);
+        return;
+      }
+      if (!extractedDrafts.length) {
+        setImportStatus("Chưa có dữ liệu nháp để UPDATE. Hãy xử lý file hoặc dán nội dung trước.");
+        return;
+      }
+
+      const confirmMsg = currentLang === "ja"
+        ? `抽出された ${extractedDrafts.length} 件の求人をシステムとSupabaseに保存しますか？`
+        : `Xác nhận lưu ${extractedDrafts.length} đơn tuyển đã kiểm tra vào hệ thống và Supabase?`;
+      if (!window.confirm(confirmMsg)) return;
+
+      // Sao lưu dữ liệu trước khi thay đổi hệ thống
+      saveBackupJobs(JOBS);
+
+      let addedCount = 0;
+      let updatedCount = 0;
+      let skippedCount = 0;
+      let syncFailedCount = 0;
+
+      for (const draft of extractedDrafts) {
+        const candidate = JSON.parse(JSON.stringify(draft.job));
+        candidate.code = String(candidate.code || "").replace(/^\[Cần kiểm tra\]\s*/i, "").trim();
+        if (!candidate.code) {
+          candidate.code = `AUTO-${Date.now().toString().slice(-5)}-${addedCount + 1}`;
+        }
+        candidate.id = candidate.id || makeJobId(candidate);
+        candidate.i18n = candidate.i18n || { vi: {}, ja: {} };
+        candidate.i18n.vi.japanese = candidate.i18n.vi.japanese || "—";
+        candidate.i18n.ja.japanese = candidate.i18n.ja.japanese || "—";
+
+        const existingIdx = JOBS.findIndex(item =>
+          (item.id && candidate.id && item.id === candidate.id) ||
+          (item.code && candidate.code && item.code.toLowerCase() === candidate.code.toLowerCase())
+        );
+
+        let targetJob = null;
+        if (existingIdx >= 0) {
+          if (draft.duplicateAction === "skip") {
+            skippedCount++;
+            continue;
+          }
+          const oldJob = JOBS[existingIdx];
+          targetJob = {
+            ...oldJob,
+            code: candidate.code,
+            categoryType: candidate.categoryType || oldJob.categoryType,
+            status: oldJob.status || candidate.status || "Đang tuyển",
+            industry: candidate.industry || oldJob.industry,
+            prefecture: candidate.prefecture || oldJob.prefecture,
+            i18n: {
+              vi: { ...(oldJob.i18n?.vi || {}), ...(candidate.i18n?.vi || {}) },
+              ja: { ...(oldJob.i18n?.ja || {}), ...(candidate.i18n?.ja || {}) }
+            }
+          };
+          JOBS[existingIdx] = targetJob;
+          updatedCount++;
+        } else {
+          targetJob = candidate;
+          JOBS.unshift(targetJob);
+          addedCount++;
+        }
+
+        try {
+          await apiUpsertJob(targetJob);
+        } catch (err) {
+          syncFailedCount++;
+        }
+      }
+
+      saveCachedJobs();
+      renderJobs();
+      renderUpdateManagerList();
+
+      const remainingDrafts = extractedDrafts.filter((_, idx) => {
+        const dJob = extractedDrafts[idx].job;
+        const normCode = String(dJob.code || "").replace(/^\[Cần kiểm tra\]\s*/i, "").trim().toLowerCase();
+        const isDupSkipped = extractedDrafts[idx].duplicateAction === "skip" && JOBS.some(j => j.code.toLowerCase() === normCode);
+        return isDupSkipped;
+      });
+      extractedDrafts = remainingDrafts;
+      renderExtractedDrafts();
+
+      const summary = `Hoàn tất: Thêm mới ${addedCount}, Cập nhật ${updatedCount}, Bỏ qua ${skippedCount}` +
+        (syncFailedCount > 0 ? ` (${syncFailedCount} đơn lưu tạm local do lỗi kết nối Supabase).` : " (đã đồng bộ lên hệ thống).");
+      setImportStatus(summary);
+      showToast(syncFailedCount > 0 ? t().cloudSyncErrorToast : t().savedToast);
     }
 
     function escapeHtml(str) {
