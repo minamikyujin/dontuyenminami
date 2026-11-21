@@ -1,0 +1,2791 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ĐƠN TUYỂN TOKUTEI GINO &amp; KỸ SƯ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --bg: #f4f7fa;
+      --surface: #ffffff;
+      --surface-muted: #f8fafc;
+      --primary: #0f766e;
+      --primary-light: #e6f4f1;
+      --accent: #0284c7;
+      --detail-bg: #eef2ff;
+      --detail-text: #3730a3;
+      --detail-border: #c7d2fe;
+      --danger: #b91c1c;
+      --danger-light: #fee2e2;
+      --open-bg: #dcfce7;
+      --open-text: #15803d;
+      --closed-bg: #e2e8f0;
+      --closed-text: #334155;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #dbe3ec;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Be Vietnam Pro", "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .brand-block .site-brand {
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2px;
+    }
+
+    .brand-block h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.35;
+    }
+
+    .header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .lang-bar {
+      display: inline-flex;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .lang-btn {
+      background: transparent;
+      color: var(--text);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .lang-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .category-nav {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .cat-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .cat-tab-btn {
+      background: var(--surface-muted);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 9px;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .cat-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .cat-picker-panel {
+      display: none;
+      width: 100%;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 6px;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+
+    .cat-picker-panel.open {
+      display: block;
+    }
+
+    .cat-group-title {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 8px 0 6px;
+    }
+
+    .cat-group-title:first-child {
+      margin-top: 0;
+    }
+
+    .cat-chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .cat-chip {
+      background: #ffffff;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 7px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .cat-chip.selected {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary);
+      font-weight: 700;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font-family: inherit;
+      font-size: 0.88rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    button {
+      padding: 8px 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity 0.15s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .btn-secondary {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: #99f6e4;
+    }
+
+    .btn-admin {
+      background: #1e293b;
+      color: #ffffff;
+      border-color: #1e293b;
+    }
+
+    .btn-update {
+      background: #0369a1;
+      color: #ffffff;
+      border-color: #0369a1;
+    }
+
+    .btn-detail {
+      background: var(--detail-bg);
+      color: var(--detail-text);
+      border-color: var(--detail-border);
+    }
+
+    .btn-snap {
+      background: #fef3c7;
+      color: #92400e;
+      border-color: #fde68a;
+    }
+
+    .btn-danger-sm {
+      background: var(--danger-light);
+      color: var(--danger);
+      border-color: #fecaca;
+      padding: 5px 9px;
+      font-size: 0.78rem;
+    }
+
+    .filters {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 16px;
+      display: grid;
+      grid-template-columns: 1.35fr 1fr 1fr 0.95fr;
+      gap: 10px;
+      position: relative;
+    }
+
+    .filter-control {
+      width: 100%;
+      padding: 8px 11px;
+      background: #ffffff;
+      color: var(--text);
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .location-dropdown-wrapper {
+      position: relative;
+    }
+
+    .location-panel {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.14);
+      padding: 10px;
+      max-height: 380px;
+      overflow-y: auto;
+      z-index: 80;
+    }
+
+    .location-panel.open {
+      display: block;
+    }
+
+    .loc-all-btn {
+      width: 100%;
+      text-align: left;
+      background: var(--surface-muted);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 7px 10px;
+      margin-bottom: 6px;
+      font-size: 0.84rem;
+    }
+
+    .region-item {
+      border-bottom: 1px solid #f1f5f9;
+      padding: 3px 0;
+    }
+
+    .region-item:last-child {
+      border-bottom: none;
+    }
+
+    .region-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .region-select-btn {
+      flex: 1;
+      text-align: left;
+      background: transparent;
+      color: var(--text);
+      border: none;
+      padding: 5px 6px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      justify-content: flex-start;
+    }
+
+    .region-select-btn.selected,
+    .pref-btn.selected,
+    .loc-all-btn.selected {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .region-toggle-btn {
+      background: var(--surface-muted);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      font-size: 0.78rem;
+      min-width: 28px;
+    }
+
+    .pref-list {
+      display: none;
+      padding: 3px 0 6px 12px;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .pref-list.expanded {
+      display: flex;
+    }
+
+    .pref-btn {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      color: var(--text);
+      border: none;
+      padding: 4px 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      justify-content: flex-start;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .card.is-closed {
+      background: #f8fafc;
+      opacity: 0.85;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .card-title-compact {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .status-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .status-open {
+      background: var(--open-bg);
+      color: var(--open-text);
+    }
+
+    .status-closed {
+      background: var(--closed-bg);
+      color: var(--closed-text);
+    }
+
+    .compact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.86rem;
+    }
+
+    .compact-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .compact-row strong {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .nat-badge-list {
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .country-flag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 22px;
+      padding: 0 7px 0 4px;
+      border-radius: 6px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .country-flag-svg {
+      width: 16px;
+      height: 11px;
+      border-radius: 2px;
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.14);
+      flex-shrink: 0;
+      display: block;
+    }
+
+    .admin-card-bar {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .admin-card-bar select {
+      padding: 5px 8px;
+      font-size: 0.8rem;
+    }
+
+    .card-actions-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .card-actions-row button {
+      width: 100%;
+      min-width: 0;
+      padding: 8px 4px;
+      font-size: clamp(0.68rem, 0.9vw, 0.76rem);
+      line-height: 1.2;
+      white-space: nowrap;
+      letter-spacing: -0.015em;
+    }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.58);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 120;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 840px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 20px;
+      box-shadow: 0 22px 48px rgba(15, 23, 42, 0.25);
+    }
+
+    .modal-sm {
+      max-width: 440px;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+
+    .modal-brand {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .modal-head h3 {
+      font-size: 1.12rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-top: 2px;
+    }
+
+    .helper-box {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .detail-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 14px;
+      font-size: 0.86rem;
+    }
+
+    .detail-table th,
+    .detail-table td {
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }
+
+    .detail-table th {
+      width: 26%;
+      background: var(--surface-muted);
+      font-weight: 700;
+    }
+
+    .modal-foot {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .form-field {
+      margin-bottom: 10px;
+    }
+
+    .form-field label {
+      display: block;
+      font-size: 0.83rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      width: 100%;
+      padding: 8px 10px;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .toast {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      z-index: 160;
+    }
+
+    #printOnlyArea {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .filters {
+        grid-template-columns: 1fr 1fr;
+      }
+      .header-right {
+        align-items: stretch;
+        width: 100%;
+        margin-left: 0;
+      }
+      .top-actions {
+        justify-content: stretch;
+      }
+      .top-actions button {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 560px) {
+      body {
+        padding: 10px;
+      }
+      .filters,
+      .grid,
+      .form-grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .card-actions-row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 4px;
+      }
+      .card-actions-row button {
+        font-size: 0.63rem;
+        padding: 7px 3px;
+        letter-spacing: -0.02em;
+      }
+    }
+
+    @media print {
+      @page {
+        margin: 12mm;
+      }
+      body > .container,
+      body > .modal-backdrop,
+      body > .toast {
+        display: none !important;
+      }
+      #printOnlyArea {
+        display: block !important;
+        background: #ffffff;
+        color: #0f172a;
+        font-family: "Be Vietnam Pro", "Noto Sans JP", sans-serif;
+      }
+      .print-doc-header {
+        border-bottom: 2px solid #0f766e;
+        padding-bottom: 8px;
+        margin-bottom: 12px;
+      }
+      .print-doc-brand {
+        font-size: 11px;
+        font-weight: 700;
+        color: #0284c7;
+        text-transform: uppercase;
+      }
+      .print-doc-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #0f766e;
+        margin-top: 2px;
+      }
+      .print-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11.5px;
+        line-height: 1.45;
+      }
+      .print-table th,
+      .print-table td {
+        border: 1px solid #cbd5e1;
+        padding: 6px 9px;
+        text-align: left;
+        vertical-align: top;
+      }
+      .print-table th {
+        width: 26%;
+        background: #f8fafc;
+        font-weight: 700;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand-block">
+        <div class="site-brand" id="siteBrand">Minami Kyujn Share</div>
+        <h1 id="pageTitle">ĐƠN TUYỂN TOKUTEI GINO &amp; KỸ SƯ</h1>
+      </div>
+
+      <div class="header-right">
+        <div class="lang-bar" role="group" aria-label="Language switcher">
+          <button type="button" class="lang-btn active" data-lang="vi" onclick="switchLang('vi')">Tiếng Việt</button>
+          <button type="button" class="lang-btn" data-lang="ja" onclick="switchLang('ja')">日本語</button>
+        </div>
+
+        <div class="top-actions">
+          <button type="button" id="updateBtn" class="btn-update" onclick="handleUpdateClick()"></button>
+          <button type="button" id="adminAuthBtn" class="btn-admin" onclick="handleAdminAuthClick()"></button>
+          <button type="button" id="resetFilterBtn" class="btn-secondary" onclick="resetFilters()"></button>
+        </div>
+      </div>
+    </header>
+
+    <nav class="category-nav" aria-label="Primary job categories">
+      <div class="cat-tabs">
+        <button type="button" id="tabTokutei" class="cat-tab-btn" onclick="toggleCategoryPicker('tokutei')"></button>
+        <button type="button" id="tabEngineer" class="cat-tab-btn" onclick="toggleCategoryPicker('engineer')"></button>
+      </div>
+      <div id="activeCategoryIndicator" style="font-size:0.84rem;color:var(--muted);font-weight:600;"></div>
+
+      <div id="categoryPickerPanel" class="cat-picker-panel"></div>
+    </nav>
+
+    <section class="filters" aria-label="Job filters">
+      <input id="searchInput" type="text" oninput="renderJobs()" />
+
+      <select id="industryFilter" onchange="onIndustryDropdownChange(this.value)"></select>
+
+      <div class="location-dropdown-wrapper" id="locationDropdownWrapper">
+        <button type="button" id="locationTrigger" class="filter-control" onclick="toggleLocationPanel(event)">
+          <span id="locationTriggerLabel"></span>
+          <span>▾</span>
+        </button>
+        <div id="locationPanel" class="location-panel"></div>
+      </div>
+
+      <select id="salaryFilter" onchange="renderJobs()"></select>
+    </section>
+
+    <main id="jobGrid" class="grid"></main>
+  </div>
+
+  <div id="detailModal" class="modal-backdrop" onclick="handleBackdropClick(event, 'detailModal')">
+    <div id="detailModalBox" class="modal" role="dialog" aria-modal="true" aria-labelledby="detailModalTitle">
+      <div class="modal-head">
+        <div>
+          <div class="modal-brand">Minami Kyujn Share</div>
+          <h3 id="detailModalTitle">Thông Tin Đơn Tuyển</h3>
+        </div>
+        <button type="button" id="closeDetailBtn" class="btn-secondary" onclick="closeModal('detailModal')"></button>
+      </div>
+      <div id="detailModalBody"></div>
+      <div class="modal-foot">
+        <button type="button" id="detailSnapBtn" class="btn-snap" onclick="captureDetailImage()"></button>
+        <button type="button" id="detailCopyBtn" class="btn-primary" onclick="copyCurrentDetailJob()"></button>
+        <button type="button" id="detailPrintBtn" class="btn-secondary" onclick="printSingleJob(activeDetailJob?.code)"></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="loginModal" class="modal-backdrop" onclick="handleBackdropClick(event, 'loginModal')">
+    <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
+      <div class="modal-head">
+        <div>
+          <div class="modal-brand">Minami Kyujn Share</div>
+          <h3 id="loginModalTitle"></h3>
+        </div>
+        <button type="button" id="closeLoginBtn" class="btn-secondary" onclick="closeModal('loginModal')"></button>
+      </div>
+      <div class="helper-box" id="adminAuthHint"></div>
+      <div class="form-field">
+        <label id="adminPassLabel" for="adminPassInput"></label>
+        <input id="adminPassInput" type="password" onkeydown="if(event.key==='Enter') verifyAdminPass()" />
+      </div>
+      <div class="modal-foot">
+        <button type="button" id="confirmLoginBtn" class="btn-primary" onclick="verifyAdminPass()"></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="updateManagerModal" class="modal-backdrop" onclick="handleBackdropClick(event, 'updateManagerModal')">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="updateModalTitle">
+      <div class="modal-head">
+        <div>
+          <div class="modal-brand">Minami Kyujn Share</div>
+          <h3 id="updateModalTitle"></h3>
+        </div>
+        <button type="button" id="closeUpdateManagerBtn" class="btn-secondary" onclick="closeModal('updateManagerModal')"></button>
+      </div>
+      <div class="helper-box" id="updateGuideHint"></div>
+      <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+        <button type="button" id="openAddFromManagerBtn" class="btn-primary" onclick="openEditorModal()"></button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" id="changePasscodeBtn" class="btn-secondary" onclick="promptChangePasscode()"></button>
+          <button type="button" id="restoreDefaultBtn" class="btn-danger-sm" onclick="restoreDefaultJobs()"></button>
+        </div>
+      </div>
+      <div id="updateJobListBody"></div>
+    </div>
+  </div>
+
+  <div id="editorModal" class="modal-backdrop" onclick="handleBackdropClick(event, 'editorModal')">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editorModalTitle">
+      <div class="modal-head">
+        <div>
+          <div class="modal-brand">Minami Kyujn Share</div>
+          <h3 id="editorModalTitle"></h3>
+        </div>
+        <button type="button" id="closeEditorBtn" class="btn-secondary" onclick="closeModal('editorModal')"></button>
+      </div>
+      <form id="jobEditorForm" onsubmit="saveEditedJob(event)">
+        <input type="hidden" id="editJobIndex" />
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label id="lblEditCode" for="editCode"></label>
+            <input id="editCode" type="text" required />
+          </div>
+          <div class="form-field">
+            <label id="lblEditStatus" for="editStatus"></label>
+            <select id="editStatus">
+              <option value="Đang tuyển">Đang tuyển</option>
+              <option value="Đóng đơn">Đóng đơn</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label id="lblEditCategoryType" for="editCategoryType"></label>
+            <select id="editCategoryType">
+              <option value="tokutei">Tokutei Gino</option>
+              <option value="engineer">Kỹ sư</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label id="lblEditIndustry" for="editIndustry"></label>
+            <select id="editIndustry"></select>
+          </div>
+          <div class="form-field">
+            <label id="lblEditPref" for="editPref"></label>
+            <select id="editPref"></select>
+          </div>
+          <div class="form-field">
+            <label id="lblEditGender" for="editGender"></label>
+            <select id="editGender">
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+              <option value="Nam/Nữ">Nam/Nữ</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label id="lblEditTitle" for="editTitle"></label>
+          <input id="editTitle" type="text" required />
+        </div>
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label id="lblEditLocation" for="editLocation"></label>
+            <input id="editLocation" type="text" />
+          </div>
+          <div class="form-field">
+            <label id="lblEditNat" for="editNat"></label>
+            <input id="editNat" type="text" placeholder="VN, ID, MM, TH, KH, NP, CN, LK, BD, LA" />
+          </div>
+          <div class="form-field">
+            <label id="lblEditHeadcount" for="editHeadcount"></label>
+            <input id="editHeadcount" type="text" />
+          </div>
+          <div class="form-field">
+            <label id="lblEditSalary" for="editSalary"></label>
+            <input id="editSalary" type="text" />
+          </div>
+          <div class="form-field">
+            <label id="lblEditBonus" for="editBonus"></label>
+            <input id="editBonus" type="text" />
+          </div>
+          <div class="form-field">
+            <label id="lblEditRaise" for="editRaise"></label>
+            <input id="editRaise" type="text" />
+          </div>
+          <div class="form-field">
+            <label id="lblEditOvertime" for="editOvertime"></label>
+            <input id="editOvertime" type="text" />
+          </div>
+          <div class="form-field">
+            <label id="lblEditHousing" for="editHousing"></label>
+            <input id="editHousing" type="text" />
+          </div>
+        </div>
+        <div class="form-field">
+          <label id="lblEditShift" for="editShift"></label>
+          <input id="editShift" type="text" />
+        </div>
+        <div class="form-field">
+          <label id="lblEditReq" for="editReq"></label>
+          <textarea id="editReq" rows="2"></textarea>
+        </div>
+        <div class="form-field">
+          <label id="lblEditNote" for="editNote"></label>
+          <textarea id="editNote" rows="2"></textarea>
+        </div>
+        <div class="modal-foot">
+          <button type="submit" id="saveJobBtn" class="btn-primary"></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="printOnlyArea"></div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const SUPABASE_URL = "https://mtyemmuuzqzvnfiraemq.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10eWVtbXV1enF6dm5maXJhZW1xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUyNDg0NDcsImV4cCI6MjExMDgyNDQ0N30.ImjISH71f3ByEjLbVi0VaKPlsAVuEunbraXghQWna8U";
+    const SUPABASE_TABLE = "jobs";
+
+    const DEFAULT_ADMIN_PASSCODE = "MINAMI2026";
+    const STORAGE_JOBS_KEY = "MINAMI_KYUJIN_JOBS_V1";
+    const STORAGE_PASS_KEY = "MINAMI_KYUJIN_ADMIN_PASS_V1";
+
+    function isSupabaseConfigured() {
+      return SUPABASE_URL && !SUPABASE_URL.includes("YOUR_PROJECT_ID") &&
+             SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.includes("YOUR_SUPABASE_");
+    }
+
+    function getSupabaseHeaders(extra = {}) {
+      return {
+        "Content-Type": "application/json",
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        ...extra
+      };
+    }
+
+    function makeJobId(job) {
+      const base = `${job.code || "job"}-${job.prefecture || "jp"}-${job.industry || "gen"}`
+        .toLowerCase()
+        .replace(/[^a-z0-9-_]+/g, "-");
+      return base || `job-${Date.now()}`;
+    }
+
+    function serializeJobForDb(job) {
+      const id = job.id || makeJobId(job);
+      return {
+        id,
+        code: job.code,
+        category_type: job.categoryType || "tokutei",
+        status: job.status === "Đóng đơn" ? "Đóng đơn" : "Đang tuyển",
+        company: job.company || "Minami Kyujn Share",
+        industry: job.industry || "Kaigo",
+        prefecture: job.prefecture || "Tokyo",
+        link: job.link || "",
+        i18n: job.i18n || { vi: {}, ja: {} },
+        updated_at: new Date().toISOString()
+      };
+    }
+
+    function deserializeJobFromDb(row) {
+      return {
+        id: row.id,
+        code: row.code,
+        categoryType: row.category_type || "tokutei",
+        status: row.status === "Đóng đơn" ? "Đóng đơn" : "Đang tuyển",
+        company: row.company || "Minami Kyujn Share",
+        industry: row.industry || "Kaigo",
+        prefecture: row.prefecture || "Tokyo",
+        link: row.link || "",
+        i18n: row.i18n && typeof row.i18n === "object"
+          ? row.i18n
+          : { vi: {}, ja: {} }
+      };
+    }
+
+    async function apiFetchJobs() {
+      if (!isSupabaseConfigured()) return null;
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?select=*&order=created_at.desc`,
+        { headers: getSupabaseHeaders() }
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const rows = await res.json();
+      return Array.isArray(rows) ? rows.map(deserializeJobFromDb) : [];
+    }
+
+    async function apiUpsertJob(job) {
+      if (!isSupabaseConfigured()) return false;
+      const payload = serializeJobForDb(job);
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?on_conflict=id`,
+        {
+          method: "POST",
+          headers: getSupabaseHeaders({ Prefer: "resolution=merge-duplicates,return=representation" }),
+          body: JSON.stringify(payload)
+        }
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return true;
+    }
+
+    async function apiDeleteJob(job) {
+      if (!isSupabaseConfigured() || !job) return false;
+      const id = encodeURIComponent(job.id || makeJobId(job));
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?id=eq.${id}`,
+        {
+          method: "DELETE",
+          headers: getSupabaseHeaders({ Prefer: "return=minimal" })
+        }
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return true;
+    }
+
+    async function apiSeedInitialJobs(list) {
+      if (!isSupabaseConfigured()) return false;
+      const rows = list.map((item, idx) => ({
+        ...serializeJobForDb(item),
+        created_at: new Date(Date.now() - idx * 1000).toISOString()
+      }));
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?on_conflict=id`,
+        {
+          method: "POST",
+          headers: getSupabaseHeaders({ Prefer: "resolution=merge-duplicates,return=minimal" }),
+          body: JSON.stringify(rows)
+        }
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return true;
+    }
+
+    function getAdminPasscode() {
+      return localStorage.getItem(STORAGE_PASS_KEY) || DEFAULT_ADMIN_PASSCODE;
+    }
+
+    function setAdminPasscode(newPass) {
+      localStorage.setItem(STORAGE_PASS_KEY, newPass);
+    }
+
+    const COUNTRIES = [
+      { code: "VN", vi: "Việt Nam", ja: "ベトナム", aliases: ["việt nam", "vietnam", "vn", "ベトナム"] },
+      { code: "ID", vi: "Indonesia", ja: "インドネシア", aliases: ["indonesia", "id", "インドネシア"] },
+      { code: "MM", vi: "Myanmar", ja: "ミャンマー", aliases: ["myanmar", "mm", "ミャンマー"] },
+      { code: "TH", vi: "Thái Lan", ja: "タイ", aliases: ["thái lan", "thailand", "th", "タイ"] },
+      { code: "KH", vi: "Campuchia", ja: "カンボジア", aliases: ["campuchia", "cambodia", "kh", "カンボジア"] },
+      { code: "NP", vi: "Nepal", ja: "ネパール", aliases: ["nepal", "np", "ネパール"] },
+      { code: "CN", vi: "Trung Quốc", ja: "中国", aliases: ["trung quốc", "china", "cn", "中国"] },
+      { code: "LK", vi: "Sri Lanka", ja: "スリランカ", aliases: ["sri lanka", "lk", "スリランカ"] },
+      { code: "BD", vi: "Bangladesh", ja: "バングラデシュ", aliases: ["bangladesh", "bd", "バングラデシュ"] },
+      { code: "LA", vi: "Lào", ja: "ラオス", aliases: ["lào", "laos", "la", "ラオス"] }
+    ];
+
+    function renderFlagSvg(code) {
+      switch (code) {
+        case "VN":
+          return `<svg class="country-flag-svg" viewBox="0 0 24 16"><rect width="24" height="16" fill="#da251d"/><polygon points="12,3 13.8,8.5 19.5,8.5 14.9,11.8 16.7,17.3 12,14 7.3,17.3 9.1,11.8 4.5,8.5 10.2,8.5" transform="scale(0.82) translate(2.6,1.2)" fill="#ffde00"/></svg>`;
+        case "ID":
+          return `<svg class="country-flag-svg" viewBox="0 0 24 16"><rect width="24" height="8" y="0" fill="#ce1126"/><rect width="24" height="8" y="8" fill="#ffffff"/></svg>`;
+        case "MM":
+          return `<svg class="country-flag-svg" viewBox="0 0 24 16"><rect width="24" height="5.34" y="0" fill="#fecb00"/><rect width="24" height="5.34" y="5.33" fill="#34b233"/><rect width="24" height="5.34" y="10.66" fill="#ea2839"/><polygon points="12,3 13.4,7.2 17.8,7.2 14.2,9.8 15.6,14 12,11.4 8.4,14 9.8,9.8 6.2,7.2 10.6,7.2" fill="#ffffff"/></svg>`;
+        case "TH":
+          return `<svg class="country-flag-svg" viewBox="0 0 24 16"><rect width="24" height="16" fill="#ed1c24"/><rect width="24" height="10.6" y="2.7" fill="#ffffff"/><rect width="24" height="5.4" y="5.3" fill="#241d4f"/></svg>`;
+        case "KH":
+          return `<svg class="country-flag-svg" viewBox="0 0 24 16"><rect width="24" height="4" y="0" fill="#032ea1"/><rect width="24" height="8" y="4" fill="#e00025"/><rect width="24" height="4" y="12" fill="#032ea1"/><rect x="7" y="6" width="10" height="5" fill="#ffffff"/></svg>`;
+        case "NP":
+          return `<svg class="country-flag-svg" viewBox="0 0 24 16"><rect width="24" height="16" fill="#dc143c"/><polygon points="2,1 18,8 8,8 20,15 2,15" fill="#dc143c" stroke="#003893" stroke-width="1.5"/><circle cx="7" cy="6" r="1.4" fill="#ffffff"/><circle cx="7.5" cy="11.5" r="1.8" fill="#ffffff"/></svg>`;
+        case "CN":
+          return `<svg class="country-flag-svg" viewBox="0 0 24 16"><rect width="24" height="16" fill="#de2910"/><polygon points="6,3.5 7,6.5 10,6.5 7.5,8.3 8.5,11.3 6,9.5 3.5,11.3 4.5,8.3 2,6.5 5,6.5" transform="scale(0.75) translate(1,1)" fill="#ffde00"/></svg>`;
+        case "LK":
+          return `<svg class="country-flag-svg" viewBox="0 0 24 16"><rect width="24" height="16" fill="#8d153a"/><rect x="1.5" y="1.5" width="4.5" height="13" fill="#eb7400"/><rect x="7" y="1.5" width="4.5" height="13" fill="#198754"/><rect x="11.5" y="1.5" width="11" height="13" fill="#ffbe29"/><rect x="13" y="3" width="8" height="10" fill="#8d153a"/></svg>`;
+        case "BD":
+          return `<svg class="country-flag-svg" viewBox="0 0 24 16"><rect width="24" height="16" fill="#006a4e"/><circle cx="11" cy="8" r="4.5" fill="#f42a41"/></svg>`;
+        case "LA":
+        default:
+          return `<svg class="country-flag-svg" viewBox="0 0 24 16"><rect width="24" height="4" y="0" fill="#ce1126"/><rect width="24" height="8" y="4" fill="#002868"/><rect width="24" height="4" y="12" fill="#ce1126"/><circle cx="12" cy="8" r="2.8" fill="#ffffff"/></svg>`;
+      }
+    }
+
+    function renderCountryBadgeHtml(country) {
+      return `
+        <span class="country-flag-badge" title="${escapeAttr(`${country.code} – ${currentLang === "ja" ? country.ja : country.vi}`)}">
+          ${renderFlagSvg(country.code)}
+          <span>${escapeHtml(country.code)}</span>
+        </span>
+      `;
+    }
+
+    const REGIONS = [
+      { id: "hokkaido", vi: "Hokkaido", ja: "北海道地方", prefs: [{ key: "Hokkaido", vi: "Hokkaido", ja: "北海道" }] },
+      { id: "tohoku", vi: "Tohoku", ja: "東北地方", prefs: [
+        { key: "Aomori", vi: "Aomori", ja: "青森県" },
+        { key: "Iwate", vi: "Iwate", ja: "岩手県" },
+        { key: "Miyagi", vi: "Miyagi", ja: "宮城県" },
+        { key: "Akita", vi: "Akita", ja: "秋田県" },
+        { key: "Yamagata", vi: "Yamagata", ja: "山形県" },
+        { key: "Fukushima", vi: "Fukushima", ja: "福島県" }
+      ]},
+      { id: "kanto", vi: "Kanto", ja: "関東地方", prefs: [
+        { key: "Ibaraki", vi: "Ibaraki", ja: "茨城県" },
+        { key: "Tochigi", vi: "Tochigi", ja: "栃木県" },
+        { key: "Gunma", vi: "Gunma", ja: "群馬県" },
+        { key: "Saitama", vi: "Saitama", ja: "埼玉県" },
+        { key: "Chiba", vi: "Chiba", ja: "千葉県" },
+        { key: "Tokyo", vi: "Tokyo", ja: "東京都" },
+        { key: "Kanagawa", vi: "Kanagawa", ja: "神奈川県" }
+      ]},
+      { id: "chubu", vi: "Chubu", ja: "中部地方", prefs: [
+        { key: "Niigata", vi: "Niigata", ja: "新潟県" },
+        { key: "Toyama", vi: "Toyama", ja: "富山県" },
+        { key: "Ishikawa", vi: "Ishikawa", ja: "石川県" },
+        { key: "Fukui", vi: "Fukui", ja: "福井県" },
+        { key: "Yamanashi", vi: "Yamanashi", ja: "山梨県" },
+        { key: "Nagano", vi: "Nagano", ja: "長野県" },
+        { key: "Gifu", vi: "Gifu", ja: "岐阜県" },
+        { key: "Shizuoka", vi: "Shizuoka", ja: "静岡県" },
+        { key: "Aichi", vi: "Aichi", ja: "愛知県" }
+      ]},
+      { id: "kansai", vi: "Kansai", ja: "関西地方", prefs: [
+        { key: "Mie", vi: "Mie", ja: "三重県" },
+        { key: "Shiga", vi: "Shiga", ja: "滋賀県" },
+        { key: "Kyoto", vi: "Kyoto", ja: "京都府" },
+        { key: "Osaka", vi: "Osaka", ja: "大阪府" },
+        { key: "Hyogo", vi: "Hyogo", ja: "兵庫県" },
+        { key: "Nara", vi: "Nara", ja: "奈良県" },
+        { key: "Wakayama", vi: "Wakayama", ja: "和歌山県" }
+      ]},
+      { id: "chugoku", vi: "Chugoku", ja: "中国地方", prefs: [
+        { key: "Tottori", vi: "Tottori", ja: "鳥取県" },
+        { key: "Shimane", vi: "Shimane", ja: "島根県" },
+        { key: "Okayama", vi: "Okayama", ja: "岡山県" },
+        { key: "Hiroshima", vi: "Hiroshima", ja: "広島県" },
+        { key: "Yamaguchi", vi: "Yamaguchi", ja: "山口県" }
+      ]},
+      { id: "shikoku", vi: "Shikoku", ja: "四国地方", prefs: [
+        { key: "Tokushima", vi: "Tokushima", ja: "徳島県" },
+        { key: "Kagawa", vi: "Kagawa", ja: "香川県" },
+        { key: "Ehime", vi: "Ehime", ja: "愛媛県" },
+        { key: "Kochi", vi: "Kochi", ja: "高知県" }
+      ]},
+      { id: "kyushu_okinawa", vi: "Kyushu & Okinawa", ja: "九州・沖縄地方", prefs: [
+        { key: "Fukuoka", vi: "Fukuoka", ja: "福岡県" },
+        { key: "Saga", vi: "Saga", ja: "佐賀県" },
+        { key: "Nagasaki", vi: "Nagasaki", ja: "長崎県" },
+        { key: "Kumamoto", vi: "Kumamoto", ja: "熊本県" },
+        { key: "Oita", vi: "Oita", ja: "大分県" },
+        { key: "Miyazaki", vi: "Miyazaki", ja: "宮崎県" },
+        { key: "Kagoshima", vi: "Kagoshima", ja: "鹿児島県" },
+        { key: "Okinawa", vi: "Okinawa", ja: "沖縄県" }
+      ]}
+    ];
+
+    const TOKUTEI_INDUSTRIES = [
+      { key: "Nhà hàng", vi: "Nhà hàng", ja: "外食" },
+      { key: "Kaigo", vi: "Kaigo", ja: "介護" },
+      { key: "Kaigo Fukushi", vi: "Kaigo Fukushi", ja: "介護福祉士" },
+      { key: "Xây dựng", vi: "Xây dựng", ja: "建設" },
+      { key: "Vệ sinh tòa nhà", vi: "Vệ sinh tòa nhà", ja: "ビルクリーニング" },
+      { key: "Khách sạn", vi: "Khách sạn", ja: "宿泊" },
+      { key: "Chế biến thực phẩm", vi: "Chế biến thực phẩm", ja: "飲食料品製造" },
+      { key: "Gia công cơ khí", vi: "Gia công cơ khí", ja: "機械金属加工" },
+      { key: "Bảo dưỡng ô tô", vi: "Bảo dưỡng ô tô", ja: "自動車整備" },
+      { key: "Nông nghiệp", vi: "Nông nghiệp", ja: "農業" },
+      { key: "Vận tải", vi: "Vận tải", ja: "自動車運送業" }
+    ];
+
+    const ENGINEER_GROUPS = [
+      {
+        id: "eng_tech",
+        vi: "A. Nhóm kỹ thuật – 技術 (Engineering)",
+        ja: "A. 技術（Engineering）",
+        items: [
+          { key: "Thiết kế máy móc", vi: "Thiết kế máy móc", ja: "機械設計" },
+          { key: "Thiết kế điện", vi: "Thiết kế điện", ja: "電気設計" },
+          { key: "Thiết kế điện tử", vi: "Thiết kế điện tử", ja: "電子設計" },
+          { key: "Thiết kế CAD", vi: "Thiết kế CAD", ja: "CAD設計" },
+          { key: "Thiết kế kiến trúc", vi: "Thiết kế kiến trúc", ja: "建築設計" },
+          { key: "Thiết kế công trình", vi: "Thiết kế công trình", ja: "土木設計" },
+          { key: "Kỹ sư hệ thống", vi: "Kỹ sư hệ thống", ja: "システムエンジニア" },
+          { key: "Lập trình viên", vi: "Lập trình viên", ja: "プログラマー" },
+          { key: "Kỹ sư IT", vi: "Kỹ sư IT", ja: "ITエンジニア" },
+          { key: "Phát triển phần mềm", vi: "Phát triển phần mềm", ja: "ソフトウェア開発" },
+          { key: "Kỹ sư mạng", vi: "Kỹ sư mạng", ja: "ネットワークエンジニア" },
+          { key: "Kỹ thuật sản xuất", vi: "Kỹ thuật sản xuất", ja: "生産技術" },
+          { key: "Quản lý sản xuất", vi: "Quản lý sản xuất", ja: "生産管理" },
+          { key: "Quản lý chất lượng", vi: "Quản lý chất lượng", ja: "品質管理" },
+          { key: "Đảm bảo chất lượng", vi: "Đảm bảo chất lượng", ja: "品質保証" },
+          { key: "Phát triển kỹ thuật", vi: "Phát triển kỹ thuật", ja: "技術開発" },
+          { key: "Nghiên cứu và phát triển", vi: "Nghiên cứu và phát triển", ja: "研究開発" },
+          { key: "Thiết kế điều khiển", vi: "Thiết kế điều khiển", ja: "制御設計" },
+          { key: "Kỹ sư robot", vi: "Kỹ sư robot", ja: "ロボットエンジニア" },
+          { key: "Kỹ sư hóa học", vi: "Kỹ sư hóa học", ja: "化学技術者" }
+        ]
+      },
+      {
+        id: "eng_humanities",
+        vi: "B. Nhóm kiến thức nhân văn – 人文知識 (Humanities)",
+        ja: "B. 人文知識（Humanities）",
+        items: [
+          { key: "Nhân viên kinh doanh", vi: "Nhân viên kinh doanh", ja: "営業" },
+          { key: "Kinh doanh quốc tế", vi: "Kinh doanh quốc tế", ja: "海外営業" },
+          { key: "Nhân viên xuất nhập khẩu", vi: "Nhân viên xuất nhập khẩu", ja: "貿易事務" },
+          { key: "Kế toán", vi: "Kế toán", ja: "経理" },
+          { key: "Tài chính", vi: "Tài chính", ja: "財務" },
+          { key: "Hành chính tổng hợp", vi: "Hành chính tổng hợp", ja: "総務" },
+          { key: "Nhân sự", vi: "Nhân sự", ja: "人事" },
+          { key: "Quản lý lao động", vi: "Quản lý lao động", ja: "労務管理" },
+          { key: "Marketing", vi: "Marketing", ja: "マーケティング" },
+          { key: "Lên kế hoạch sản phẩm", vi: "Lên kế hoạch sản phẩm", ja: "商品企画" },
+          { key: "Hoạch định kinh doanh", vi: "Hoạch định kinh doanh", ja: "経営企画" },
+          { key: "Lập kế hoạch dự án", vi: "Lập kế hoạch dự án", ja: "事業企画" },
+          { key: "Tư vấn", vi: "Tư vấn", ja: "コンサルタント" },
+          { key: "Quản lý logistics", vi: "Quản lý logistics", ja: "物流管理" },
+          { key: "Quản lý cửa hàng", vi: "Quản lý cửa hàng", ja: "店舗管理" },
+          { key: "Quản lý kinh doanh", vi: "Quản lý kinh doanh", ja: "経営管理" }
+        ]
+      },
+      {
+        id: "eng_intl",
+        vi: "C. Nhóm nghiệp vụ quốc tế – 国際業務 (International Services)",
+        ja: "C. 国際業務（International Services）",
+        items: [
+          { key: "Phiên dịch", vi: "Phiên dịch", ja: "通訳" },
+          { key: "Biên dịch", vi: "Biên dịch", ja: "翻訳" },
+          { key: "Biên phiên dịch", vi: "Biên phiên dịch", ja: "通訳・翻訳" },
+          { key: "Giáo viên ngoại ngữ", vi: "Giáo viên ngoại ngữ", ja: "語学講師" },
+          { key: "Giao dịch quốc tế", vi: "Giao dịch quốc tế", ja: "海外取引業務" },
+          { key: "Phụ trách kinh doanh nước ngoài", vi: "Phụ trách kinh doanh nước ngoài", ja: "海外事業担当" },
+          { key: "Nghiệp vụ hỗ trợ người nước ngoài", vi: "Nghiệp vụ hỗ trợ người nước ngoài", ja: "外国人対応業務" },
+          { key: "Quan hệ công chúng", vi: "Quan hệ công chúng", ja: "広報" },
+          { key: "Quảng cáo", vi: "Quảng cáo", ja: "宣伝" },
+          { key: "Nhà thiết kế", vi: "Nhà thiết kế", ja: "デザイナー" },
+          { key: "Thiết kế website", vi: "Thiết kế website", ja: "Webデザイナー" },
+          { key: "Phát triển sản phẩm", vi: "Phát triển sản phẩm", ja: "商品開発" }
+        ]
+      },
+      {
+        id: "eng_other",
+        vi: "D. Khác – その他",
+        ja: "D. その他",
+        items: [
+          { key: "Khác", vi: "Khác", ja: "その他" }
+        ]
+      }
+    ];
+
+    const OTHER_INDUSTRY = { key: "Khác", vi: "Khác", ja: "その他" };
+
+    function getAllIndustries() {
+      const map = new Map();
+      TOKUTEI_INDUSTRIES.forEach(item => map.set(item.key, item));
+      ENGINEER_GROUPS.forEach(grp => grp.items.forEach(item => map.set(item.key, item)));
+      map.set(OTHER_INDUSTRY.key, OTHER_INDUSTRY);
+      return Array.from(map.values());
+    }
+
+    const SALARY_RANGES = [
+      { key: "", vi: "Tất cả mức lương", ja: "すべての給与" },
+      { key: "15-20", vi: "15–20万円", ja: "15–20万円" },
+      { key: "20-25", vi: "20–25万円", ja: "20–25万円" },
+      { key: "25-30", vi: "25–30万円", ja: "25–30万円" },
+      { key: "30+", vi: "30万円以上", ja: "30万円以上" }
+    ];
+
+    const UI_TEXT = {
+      vi: {
+        docTitle: "ĐƠN TUYỂN TOKUTEI GINO & KỸ SƯ",
+        brand: "Minami Kyujn Share",
+        pageTitle: "ĐƠN TUYỂN TOKUTEI GINO & KỸ SƯ",
+        detailHeading: "Thông Tin Đơn Tuyển",
+        updateBtn: "UPDATE",
+        adminLoginBtn: "Đăng nhập Admin",
+        adminLogoutBtn: "Thoát Admin",
+        addJobBtn: "+ Thêm đơn tuyển",
+        changePasscodeBtn: "Đổi mã xác thực",
+        restoreDefaultBtn: "Khôi phục dữ liệu gốc",
+        resetFilterBtn: "Xóa bộ lọc",
+        tabTokutei: "Tokutei Gino",
+        tabEngineer: "Kỹ sư",
+        activeCatAll: "Tất cả danh mục",
+        searchPlaceholder: "Tìm mã đơn, quốc tịch, tỉnh thành, yêu cầu...",
+        allIndustry: "Tất cả ngành nghề",
+        allLocation: "Tất cả tỉnh thành",
+        allRegionsOption: "Tất cả khu vực & tỉnh thành",
+        expandBtn: "+",
+        collapseBtn: "−",
+        copyBtn: "Copy tin gửi",
+        detailBtn: "Chi tiết đơn",
+        snapCardBtn: "Chụp ảnh đơn tuyển",
+        snapDetailBtn: "Chụp ảnh đơn",
+        printBtn: "In / Xuất PDF",
+        closeBtn: "Đóng",
+        noResult: "Không tìm thấy đơn tuyển phù hợp.",
+        copiedToast: "Đã sao chép thông tin đơn tuyển.",
+        snapSuccessToast: "Đã lưu ảnh đơn tuyển.",
+        snapFallbackToast: "Không tải được thư viện chụp ảnh, hãy dùng In / Xuất PDF.",
+        adminLoginTitle: "Xác thực quyền quản trị viên",
+        adminAuthHint: "Nhập mã xác thực quản trị viên để mở khóa chức năng thêm, sửa, xóa và quản lý trạng thái đơn tuyển.",
+        adminPassLabel: "Nhập mã xác thực quản trị viên",
+        adminConfirmBtn: "Xác nhận",
+        adminWrongPassToast: "Mã xác thực không chính xác.",
+        adminEnabledToast: "Đã bật quyền quản trị viên.",
+        adminLoggedOutToast: "Đã thoát chế độ quản trị viên.",
+        updateManagerTitle: "Quản lý & cập nhật đơn tuyển",
+        updateGuideHint: "Hướng dẫn nhanh: Nhấn '+ Thêm đơn tuyển' để tạo đơn mới; chọn 'Đang tuyển / Đóng đơn' để đổi trạng thái ngay; nhấn 'Sửa' để cập nhật nội dung hoặc 'Xóa' để gỡ đơn.",
+        editorAddTitle: "Thêm đơn tuyển mới",
+        editorEditTitle: "Chỉnh sửa đơn tuyển",
+        editAction: "Sửa",
+        deleteAction: "Xóa",
+        saveBtn: "Lưu thay đổi",
+        savedToast: "Đã cập nhật và lưu dữ liệu đơn tuyển.",
+        deletedToast: "Đã xóa đơn tuyển.",
+        statusUpdatedToast: "Đã cập nhật trạng thái đơn.",
+        passChangedToast: "Đã cập nhật mã xác thực quản trị viên mới.",
+        passEmptyToast: "Mã xác thực không được để trống.",
+        restoredToast: "Đã khôi phục toàn bộ dữ liệu đơn tuyển gốc.",
+        cloudSyncErrorToast: "Chưa kết nối được máy chủ Supabase, đã lưu tạm trên trình duyệt.",
+        noNationalityLimit: "Không yêu cầu",
+        noLabel: "Không",
+        statusLabels: { "Đang tuyển": "Đang tuyển", "Đóng đơn": "Đóng đơn" },
+        cardLabels: { salary: "Lương", nationality: "Quốc tịch", gender: "Giới tính", bonusRaise: "Thưởng / Tăng lương" },
+        editorLabels: {
+          code: "Mã ID đơn tuyển", status: "Trạng thái đơn", categoryType: "Phân loại",
+          title: "Tên đơn tuyển", industry: "Ngành nghề", pref: "Tỉnh thành",
+          location: "Nơi làm việc chi tiết", nat: "Quốc tịch (VD: VN, ID, MM, TH, KH, NP, CN, LK, BD, LA)",
+          gender: "Giới tính", headcount: "Số lượng tuyển", salary: "Lương tháng",
+          bonus: "Thưởng", raise: "Tăng lương", overtime: "Tăng ca",
+          housing: "Nhà ở / Ký túc xá", shift: "Ca làm việc / Ngày nghỉ",
+          req: "Kinh nghiệm / Yêu cầu", note: "Ghi chú"
+        },
+        detailFields: [
+          "Tình trạng đơn", "Tên đơn", "Link", "Ngành", "Tỉnh", "Nơi làm việc",
+          "Công việc", "Quốc tịch", "Tiếng Nhật", "Số lượng", "Lương tháng",
+          "Thưởng", "Tăng lương", "Tăng ca", "Nhà ở", "Ca làm việc", "Note"
+        ],
+        colItem: "Hạng mục",
+        colValue: "Nội dung"
+      },
+      ja: {
+        docTitle: "特定技能＆技人国-求人票",
+        brand: "Minami Kyujn Share",
+        pageTitle: "特定技能＆技人国-求人票",
+        detailHeading: "求人情報詳細",
+        updateBtn: "UPDATE",
+        adminLoginBtn: "管理者ログイン",
+        adminLogoutBtn: "管理者ログアウト",
+        addJobBtn: "+ 求人追加",
+        changePasscodeBtn: "認証コード変更",
+        restoreDefaultBtn: "初期データに戻す",
+        resetFilterBtn: "条件リセット",
+        tabTokutei: "特定技能",
+        tabEngineer: "技術・人文知識・国際業務",
+        activeCatAll: "すべての区分",
+        searchPlaceholder: "求人番号・国籍・都道府県・条件で検索...",
+        allIndustry: "すべての業種",
+        allLocation: "すべての都道府県",
+        allRegionsOption: "すべてのエリア・都道府県",
+        expandBtn: "+",
+        collapseBtn: "−",
+        copyBtn: "求人テキストをコピー",
+        detailBtn: "求人詳細",
+        snapCardBtn: "求人票を画像で保存",
+        snapDetailBtn: "写真撮影",
+        printBtn: "印刷 / PDF出力",
+        closeBtn: "閉じる",
+        noResult: "条件に合う求人が見つかりませんでした。",
+        copiedToast: "求人情報をコピーしました。",
+        snapSuccessToast: "求人票画像を保存しました。",
+        snapFallbackToast: "画像生成ライブラリを読み込めないため、印刷/PDF出力をご利用ください。",
+        adminLoginTitle: "管理者認証",
+        adminAuthHint: "求人の追加・編集・削除・募集状況の変更を行うには、管理者認証コードを入力してください。",
+        adminPassLabel: "管理者認証コードを入力してください",
+        adminConfirmBtn: "確認",
+        adminWrongPassToast: "認証コードが正しくありません。",
+        adminEnabledToast: "管理者モードを有効にしました。",
+        adminLoggedOutToast: "管理者モードを終了しました。",
+        updateManagerTitle: "求人管理・更新",
+        updateGuideHint: "操作ガイド：「+ 求人追加」で新規作成、「募集中/募集終了」で状態変更、「編集」「削除」で内容を管理できます。",
+        editorAddTitle: "新規求人を追加",
+        editorEditTitle: "求人情報を編集",
+        editAction: "編集",
+        deleteAction: "削除",
+        saveBtn: "保存する",
+        savedToast: "求人情報を更新・保存しました。",
+        deletedToast: "求人を削除しました。",
+        statusUpdatedToast: "募集状況を更新しました。",
+        passChangedToast: "新しい管理者認証コードを設定しました。",
+        passEmptyToast: "認証コードを入力してください。",
+        restoredToast: "初期求人データに復元しました。",
+        cloudSyncErrorToast: "Supabaseに接続できなかったため、ブラウザ内に一時保存しました。",
+        noNationalityLimit: "制限なし",
+        noLabel: "無",
+        statusLabels: { "Đang tuyển": "募集中", "Đóng đơn": "募集終了" },
+        cardLabels: { salary: "給与", nationality: "国籍", gender: "性別", bonusRaise: "賞与・昇給" },
+        editorLabels: {
+          code: "求人ID", status: "募集状況", categoryType: "区分",
+          title: "求人名", industry: "業種", pref: "都道府県",
+          location: "勤務地詳細", nat: "国籍（例: VN, ID, MM, TH, KH, NP, CN, LK, BD, LA）",
+          gender: "性別", headcount: "募集人数", salary: "月給",
+          bonus: "賞与", raise: "昇給", overtime: "残業",
+          housing: "寮/社宅", shift: "勤務時間・休日",
+          req: "経験・応募要件", note: "備考"
+        },
+        detailFields: [
+          "募集状況", "求人名", "求人ID", "職種分野", "勤務地", "勤務先",
+          "業務内容", "国籍", "日本語", "募集人数", "月給",
+          "賞与", "昇給", "残業", "寮/社宅", "勤務時間", "備考"
+        ],
+        colItem: "項目",
+        colValue: "内容"
+      }
+    };
+
+    const INITIAL_JOBS = [
+      {
+        id: "tokutei-62-chiba-kaigo",
+        code: "特定技能62",
+        categoryType: "tokutei",
+        status: "Đang tuyển",
+        company: "Lift / 特定技能62 (Chiba - 住宅型有料老人ホーム)",
+        industry: "Kaigo",
+        prefecture: "Chiba",
+        link: "pdf/（特定技能62）千葉県 住宅型有料老人ホーム(ベトナム、インドネシア、ミャンマー).pdf",
+        i18n: {
+          vi: {
+            title: "Chăm sóc người cao tuổi (Nhà dưỡng lão dạng nhà ở)",
+            workplace: "TP. Chiba, Q. Midori",
+            jobDesc: "Chăm sóc sinh hoạt và hỗ trợ người cao tuổi tại cơ sở dưỡng lão dạng nhà ở",
+            nationality: "VN, ID, MM",
+            gender: "Nam/Nữ",
+            japanese: "Từ N3 trở lên (bắt buộc có chứng chỉ; phụ cấp chức vụ N3: 15,000 yên, N2: 25,000 yên, N1: 35,000 yên)",
+            experience: "Kinh nghiệm điều dưỡng ≥ 1 năm; có chứng chỉ Shoninsha hoặc Jisshusha",
+            headcount: "Theo chỉ tiêu tuyển",
+            salary: "265,000～290,000 yên/tháng",
+            bonus: "2 lần/năm",
+            raise: "Có",
+            overtime: "Theo ca/thực tế cơ sở",
+            housing: "Không có ký túc xá (hỗ trợ một phần chi phí chuyển nhà)",
+            shift: "7:00～16:00, 8:30～17:30, 10:00～19:00, 16:30～9:30; nghỉ 107 ngày/năm",
+            note: "Phỏng vấn 1～2 lần (có thể phỏng vấn WEB)"
+          },
+          ja: {
+            title: "住宅型有料老人ホームの介護スタッフ",
+            workplace: "千葉県千葉市緑区",
+            jobDesc: "住宅型有料老人ホームにおけるご入居者様の生活介助・介護業務全般",
+            nationality: "VN, ID, MM",
+            gender: "Nam/Nữ",
+            japanese: "N3以上（資格必須／職務手当：N3 15,000円、N2 25,000円、N1 35,000円）",
+            experience: "介護経験1年以上、初任者研修または実務者研修修了者",
+            headcount: "募集枠に準ずる",
+            salary: "265,000円～290,000円/月",
+            bonus: "年2回",
+            raise: "有",
+            overtime: "シフト・施設状況による",
+            housing: "社員寮なし（引越費用の一部を会社負担）",
+            shift: "7:00～16:00、8:30～17:30、10:00～19:00、16:30～翌9:30／年間休日107日",
+            note: "面接1～2回（WEB面接可）"
+          }
+        }
+      },
+      {
+        id: "tokutei-56-kanagawa-kaigo",
+        code: "特定技能56",
+        categoryType: "tokutei",
+        status: "Đang tuyển",
+        company: "Lift / 特定技能56 (Kanagawa - 特別養護老人ホーム・従来型)",
+        industry: "Kaigo",
+        prefecture: "Kanagawa",
+        link: "pdf/（特定技能56）神奈川 特別養護老人ホーム・従来型(ベトナム、インドネシア、ミャンマー).pdf",
+        i18n: {
+          vi: {
+            title: "Chăm sóc người cao tuổi (Viện dưỡng lão đặc biệt kiểu truyền thống)",
+            workplace: "TP. Yokohama, Tỉnh Kanagawa",
+            jobDesc: "Chăm sóc và hỗ trợ sinh hoạt cho người cao tuổi tại viện dưỡng lão đặc biệt kiểu truyền thống",
+            nationality: "VN, ID, MM",
+            gender: "Nữ",
+            japanese: "Từ N2 trở lên (bắt buộc có chứng chỉ)",
+            experience: "Kinh nghiệm điều dưỡng ≥ 1 năm",
+            headcount: "Theo chỉ tiêu tuyển",
+            salary: "287,000 yên/tháng",
+            bonus: "2 lần/năm",
+            raise: "Có",
+            overtime: "Theo ca/thực tế cơ sở",
+            housing: "Không có ký túc xá",
+            shift: "7:00～16:00, 11:00～20:00, 13:00～22:00, 21:45～7:15; nghỉ 113 ngày/năm",
+            note: "Phỏng vấn 2 lần (có thể phỏng vấn WEB cả 2 vòng)"
+          },
+          ja: {
+            title: "特別養護老人ホーム（従来型）の介護スタッフ",
+            workplace: "神奈川県横浜市",
+            jobDesc: "従来型特別養護老人ホームにおけるご入居者様の介護・生活支援業務",
+            nationality: "VN, ID, MM",
+            gender: "Nữ",
+            japanese: "N2以上（資格必須）",
+            experience: "介護経験1年以上",
+            headcount: "募集枠に準ずる",
+            salary: "287,000円/月",
+            bonus: "年2回",
+            raise: "有",
+            overtime: "シフト・施設状況による",
+            housing: "社員寮なし",
+            shift: "7:00～16:00、11:00～20:00、13:00～22:00、21:45～翌7:15／年間休日113日",
+            note: "面接2回（2回ともWEB面接可能）"
+          }
+        }
+      },
+      {
+        id: "268-chiba-kaigo",
+        code: "268",
+        categoryType: "tokutei",
+        status: "Đang tuyển",
+        company: "Lift - Form 268 (Trụ sở Tokyo / Làm việc Yachiyo, Chiba)",
+        industry: "Kaigo",
+        prefecture: "Chiba",
+        link: "pdf/268_求人票_介護.pdf",
+        i18n: {
+          vi: {
+            title: "Nhân viên chăm sóc / Điều dưỡng",
+            workplace: "TP. Yachiyo, Tỉnh Chiba",
+            jobDesc: "Chăm sóc người cao tuổi tại viện dưỡng lão đặc biệt, lên kế hoạch sự kiện, phụ trách ủy ban/họp và lập hồ sơ ghi chép",
+            nationality: "",
+            gender: "Nam/Nữ",
+            japanese: "Năng lực giao tiếp từ N4 trở lên",
+            experience: "Kinh nghiệm điều dưỡng khoảng 1 năm",
+            headcount: "Theo chỉ tiêu tuyển",
+            salary: "235,572 yên/tháng",
+            bonus: "2 lần/năm",
+            raise: "1 lần/năm",
+            overtime: "Có",
+            housing: "Có share house (công ty chi trả toàn bộ tiền nhà)",
+            shift: "7:30～16:30, 8:30～17:30, 10:00～19:00, 16:45～9:15; nghỉ 107 ngày/năm",
+            note: "Phỏng vấn online 2 lần"
+          },
+          ja: {
+            title: "介護スタッフ（特別養護老人ホーム）",
+            workplace: "千葉県八千代市内",
+            jobDesc: "特養入居者に対する介護業務、行事の企画立案、委員会・会議などの担当、記録作成業務全般",
+            nationality: "",
+            gender: "Nam/Nữ",
+            japanese: "N4以上のコミュニケーションレベル",
+            experience: "介護経験者 1年程度",
+            headcount: "募集枠に準ずる",
+            salary: "235,572円/月",
+            bonus: "年2回",
+            raise: "年1回",
+            overtime: "あり",
+            housing: "あり・家賃全額法人負担",
+            shift: "7:30～16:30、8:30～17:30、10:00～19:00、16:45～9:15／休日107日",
+            note: "面接2回オンライン"
+          }
+        }
+      },
+      {
+        id: "194-chiba-kaigo",
+        code: "194",
+        categoryType: "tokutei",
+        status: "Đang tuyển",
+        company: "Lift - Form 194 (Trụ sở & làm việc Chiba - Bệnh viện 180 giường)",
+        industry: "Kaigo",
+        prefecture: "Chiba",
+        link: "pdf/194_求人票_介護.pdf",
+        i18n: {
+          vi: {
+            title: "Hỗ trợ điều dưỡng tại bệnh viện",
+            workplace: "Tỉnh Chiba",
+            jobDesc: "Hỗ trợ điều dưỡng tại khoa điều trị nội trú (180 giường)",
+            nationality: "TH, ID",
+            gender: "Nam/Nữ",
+            japanese: "Tương đương N2 trở lên",
+            experience: "Kinh nghiệm điều dưỡng ≥ 1 năm",
+            headcount: "Theo chỉ tiêu tuyển",
+            salary: "199,700～206,900 yên/tháng",
+            bonus: "2 lần/năm",
+            raise: "1 lần/năm",
+            overtime: "Trung bình khoảng 5 giờ/tháng",
+            housing: "Nhà ở cá nhân do công ty thuê (hỗ trợ 20,000 yên/tháng)",
+            shift: "7:30～16:00, 8:30～17:00, 11:30～20:00, 16:30～9:00; nghỉ 118 ngày/năm",
+            note: "Có hỗ trợ thi chứng chỉ; phỏng vấn 1 lần"
+          },
+          ja: {
+            title: "看護補助（療養病棟）",
+            workplace: "千葉県",
+            jobDesc: "療養病棟における看護補助業務（病床数180床）",
+            nationality: "TH, ID",
+            gender: "Nam/Nữ",
+            japanese: "N2相当以上",
+            experience: "介護経験1年以上",
+            headcount: "募集枠に準ずる",
+            salary: "199,700～206,900円/月",
+            bonus: "年2回",
+            raise: "年1回",
+            overtime: "平均 5時間",
+            housing: "1人暮らしの家を会社が契約（20,000円会社負担）",
+            shift: "7:30～16:00、8:30～17:00、11:30～20:00、16:30～翌9:00／休日118日",
+            note: "資格取得支援制度あり／面接1回"
+          }
+        }
+      },
+      {
+        id: "217-tokyo-nha-hang",
+        code: "217",
+        categoryType: "tokutei",
+        status: "Đang tuyển",
+        company: "Lift - Form 217 (Trụ sở & làm việc Chuo-ku, Tokyo)",
+        industry: "Nhà hàng",
+        prefecture: "Tokyo",
+        link: "pdf/217_求人票_外食.pdf",
+        i18n: {
+          vi: {
+            title: "Phục vụ sảnh nhà hàng Ryotei",
+            workplace: "Quận Chuo, Tokyo",
+            jobDesc: "Phục vụ sảnh/phòng tiệc tại nhà hàng ryotei",
+            nationality: "",
+            gender: "Nam/Nữ",
+            japanese: "Hội thoại tiếng Nhật từ N2 trở lên",
+            experience: "Có tư cách lưu trú Tokutei Gino 1 (ngành Ngoại thực)",
+            headcount: "Theo chỉ tiêu tuyển",
+            salary: "1,500～1,800 yên/giờ",
+            bonus: "Không",
+            raise: "Có",
+            overtime: "5～30 giờ/tháng",
+            housing: "—",
+            shift: "10:00～23:00 (làm việc thực tế 8 giờ/ngày); nghỉ 110 ngày/năm",
+            note: "Giao tiếp tiếng Anh; phỏng vấn 1～2 lần"
+          },
+          ja: {
+            title: "料亭ホール接客サービス",
+            workplace: "東京都中央区",
+            jobDesc: "料亭での接客サービス（ホール業務）",
+            nationality: "",
+            gender: "Nam/Nữ",
+            japanese: "N2会話以上",
+            experience: "特定技能（外食業）の在留資格をお持ちの方",
+            headcount: "募集枠に準ずる",
+            salary: "1,500～1,800円/時",
+            bonus: "無",
+            raise: "有",
+            overtime: "5～30時間",
+            housing: "—",
+            shift: "10:00～23:00（実働8時間）／年間休日110日",
+            note: "英語での会話ができる方／面接1～2回"
+          }
+        }
+      },
+      {
+        id: "300-1-tokyo-xay-dung",
+        code: "300-1",
+        categoryType: "tokutei",
+        status: "Đang tuyển",
+        company: "Lift - Form 300 vị trí 1 (Trụ sở Tokyo)",
+        industry: "Xây dựng",
+        prefecture: "Tokyo",
+        link: "pdf/300_求人票_建設（2ポジション）.pdf",
+        i18n: {
+          vi: {
+            title: "Vận hành máy xúc nhỏ Yunbo",
+            workplace: "Tokyo và vùng Kanto",
+            jobDesc: "Vận hành máy xúc nhỏ Yunbo, sửa chữa ống cấp thoát nước và đường sá",
+            nationality: "TH",
+            gender: "Nam",
+            japanese: "Từ N3 trở lên",
+            experience: "Bằng lái hạng trung + chứng chỉ máy xúc nhỏ Yunbo + kinh nghiệm ≥ 5 năm",
+            headcount: "Vị trí 1 (mã 300)",
+            salary: "350,000～400,000 yên/tháng",
+            bonus: "Không",
+            raise: "1 lần/năm",
+            overtime: "Trung bình khoảng 5 giờ/tháng",
+            housing: "Ký túc xá nhân viên xây mới (40,000～50,000 yên/tháng)",
+            shift: "8:00～17:00 hoặc 20:00～5:00; nghỉ 112 ngày/năm",
+            note: "Đến khoảng 50 tuổi; phỏng vấn 1 lần"
+          },
+          ja: {
+            title: "小型ユンボオペレーター",
+            workplace: "東京都内・関東",
+            jobDesc: "小型ユンボのオペレーター業務および上下水道管の補修・道路整備",
+            nationality: "TH",
+            gender: "Nam",
+            japanese: "N3以上",
+            experience: "中型免許・小型ユンボ資格・実務経験5年以上",
+            headcount: "2ポジションのうち①（求人300）",
+            salary: "350,000～400,000円/月",
+            bonus: "無",
+            raise: "年1回",
+            overtime: "平均 5時間",
+            housing: "新築社員寮（家賃 4万～5万円）",
+            shift: "8:00～17:00、20:00～5:00／休日112日",
+            note: "50歳程度まで／面接1回"
+          }
+        }
+      }
+    ];
+
+    function cloneJobs(list) {
+      return JSON.parse(JSON.stringify(list));
+    }
+
+    function loadCachedJobs() {
+      try {
+        const raw = localStorage.getItem(STORAGE_JOBS_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) {}
+      return cloneJobs(INITIAL_JOBS);
+    }
+
+    function saveCachedJobs() {
+      try {
+        localStorage.setItem(STORAGE_JOBS_KEY, JSON.stringify(JOBS));
+      } catch (e) {}
+    }
+
+    let JOBS = loadCachedJobs();
+    let currentLang = "vi";
+    let isAdminVerified = false;
+    let activeCategoryTab = "";
+    let selectedLocation = { type: "all", value: "" };
+    let expandedRegions = { kanto: true, kansai: true };
+    let activeDetailJob = null;
+
+    function t() {
+      return UI_TEXT[currentLang] || UI_TEXT.vi;
+    }
+
+    function getJobData(job, lang = currentLang) {
+      return (job.i18n && job.i18n[lang]) || job.i18n.vi || {};
+    }
+
+    function getIndustryLabel(industryKey, lang = currentLang) {
+      const found = getAllIndustries().find(item => item.key === industryKey);
+      if (!found) return industryKey || "—";
+      return lang === "ja" ? found.ja : found.vi;
+    }
+
+    function getRegionLabel(region, lang = currentLang) {
+      return lang === "ja" ? region.ja : region.vi;
+    }
+
+    function getPrefLabel(prefKey, lang = currentLang) {
+      for (const reg of REGIONS) {
+        const p = reg.prefs.find(item => item.key === prefKey);
+        if (p) return lang === "ja" ? p.ja : p.vi;
+      }
+      return prefKey || "—";
+    }
+
+    function getJapanesePrefLabel(prefKey) {
+      for (const reg of REGIONS) {
+        const p = reg.prefs.find(item => item.key === prefKey);
+        if (p) return p.ja;
+      }
+      return prefKey || "";
+    }
+
+    function getStatusText(status) {
+      const normalized = status === "Đóng đơn" ? "Đóng đơn" : "Đang tuyển";
+      return t().statusLabels[normalized];
+    }
+
+    function getStatusClass(status) {
+      return status === "Đóng đơn" ? "status-closed" : "status-open";
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.style.display = "block";
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => {
+        toast.style.display = "none";
+      }, 2600);
+    }
+
+    function switchLang(lang) {
+      currentLang = lang === "ja" ? "ja" : "vi";
+      document.documentElement.lang = currentLang;
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.lang === currentLang);
+      });
+      syncAllUI();
+    }
+
+    function syncEditorLabels() {
+      const el = t().editorLabels;
+      document.getElementById("lblEditCode").textContent = el.code;
+      document.getElementById("lblEditStatus").textContent = el.status;
+      document.getElementById("lblEditCategoryType").textContent = el.categoryType;
+      document.getElementById("lblEditTitle").textContent = el.title;
+      document.getElementById("lblEditIndustry").textContent = el.industry;
+      document.getElementById("lblEditPref").textContent = el.pref;
+      document.getElementById("lblEditLocation").textContent = el.location;
+      document.getElementById("lblEditNat").textContent = el.nat;
+      document.getElementById("lblEditGender").textContent = el.gender;
+      document.getElementById("lblEditHeadcount").textContent = el.headcount;
+      document.getElementById("lblEditSalary").textContent = el.salary;
+      document.getElementById("lblEditBonus").textContent = el.bonus;
+      document.getElementById("lblEditRaise").textContent = el.raise;
+      document.getElementById("lblEditOvertime").textContent = el.overtime;
+      document.getElementById("lblEditHousing").textContent = el.housing;
+      document.getElementById("lblEditShift").textContent = el.shift;
+      document.getElementById("lblEditReq").textContent = el.req;
+      document.getElementById("lblEditNote").textContent = el.note;
+    }
+
+    function syncAllUI() {
+      const tr = t();
+      document.title = tr.docTitle;
+      document.getElementById("siteBrand").textContent = tr.brand;
+      document.getElementById("pageTitle").textContent = tr.pageTitle;
+      document.getElementById("detailModalTitle").textContent = tr.detailHeading;
+      document.getElementById("updateBtn").textContent = tr.updateBtn;
+      document.getElementById("adminAuthBtn").textContent = isAdminVerified ? tr.adminLogoutBtn : tr.adminLoginBtn;
+      document.getElementById("resetFilterBtn").textContent = tr.resetFilterBtn;
+      document.getElementById("tabTokutei").textContent = tr.tabTokutei;
+      document.getElementById("tabEngineer").textContent = tr.tabEngineer;
+      document.getElementById("searchInput").placeholder = tr.searchPlaceholder;
+      document.getElementById("closeDetailBtn").textContent = tr.closeBtn;
+      document.getElementById("detailSnapBtn").textContent = tr.snapDetailBtn;
+      document.getElementById("detailCopyBtn").textContent = tr.copyBtn;
+      document.getElementById("detailPrintBtn").textContent = tr.printBtn;
+      document.getElementById("loginModalTitle").textContent = tr.adminLoginTitle;
+      document.getElementById("adminAuthHint").textContent = tr.adminAuthHint;
+      document.getElementById("adminPassLabel").textContent = tr.adminPassLabel;
+      document.getElementById("confirmLoginBtn").textContent = tr.adminConfirmBtn;
+      document.getElementById("closeLoginBtn").textContent = tr.closeBtn;
+      document.getElementById("updateModalTitle").textContent = tr.updateManagerTitle;
+      document.getElementById("updateGuideHint").textContent = tr.updateGuideHint;
+      document.getElementById("openAddFromManagerBtn").textContent = tr.addJobBtn;
+      document.getElementById("changePasscodeBtn").textContent = tr.changePasscodeBtn;
+      document.getElementById("restoreDefaultBtn").textContent = tr.restoreDefaultBtn;
+      document.getElementById("closeUpdateManagerBtn").textContent = tr.closeBtn;
+      document.getElementById("closeEditorBtn").textContent = tr.closeBtn;
+      document.getElementById("saveJobBtn").textContent = tr.saveBtn;
+
+      syncEditorLabels();
+
+      document.getElementById("tabTokutei").classList.toggle("active", activeCategoryTab === "tokutei");
+      document.getElementById("tabEngineer").classList.toggle("active", activeCategoryTab === "engineer");
+
+      populateIndustrySelect();
+      populateSalarySelect();
+      populateEditorSelects();
+      updateLocationTriggerLabel();
+      renderLocationPanel();
+      updateCategoryIndicator();
+      if (document.getElementById("categoryPickerPanel").classList.contains("open")) {
+        renderCategoryPickerPanel();
+      }
+      renderJobs();
+      if (isAdminVerified && document.getElementById("updateManagerModal").classList.contains("show")) {
+        renderUpdateManagerList();
+      }
+      if (activeDetailJob && document.getElementById("detailModal").classList.contains("show")) {
+        openDetailModal(activeDetailJob.code);
+      }
+    }
+
+    function updateCategoryIndicator() {
+      const tr = t();
+      const indVal = document.getElementById("industryFilter").value;
+      const el = document.getElementById("activeCategoryIndicator");
+      if (!activeCategoryTab && !indVal) {
+        el.textContent = tr.activeCatAll;
+        return;
+      }
+      const parts = [];
+      if (activeCategoryTab === "tokutei") parts.push(tr.tabTokutei);
+      if (activeCategoryTab === "engineer") parts.push(tr.tabEngineer);
+      if (indVal) parts.push(getIndustryLabel(indVal));
+      el.textContent = parts.join(" › ");
+    }
+
+    function toggleCategoryPicker(tabType) {
+      const panel = document.getElementById("categoryPickerPanel");
+      if (activeCategoryTab === tabType && panel.classList.contains("open")) {
+        panel.classList.remove("open");
+        return;
+      }
+      activeCategoryTab = tabType;
+      document.getElementById("tabTokutei").classList.toggle("active", activeCategoryTab === "tokutei");
+      document.getElementById("tabEngineer").classList.toggle("active", activeCategoryTab === "engineer");
+      renderCategoryPickerPanel();
+      panel.classList.add("open");
+      updateCategoryIndicator();
+      renderJobs();
+    }
+
+    function renderCategoryPickerPanel() {
+      const panel = document.getElementById("categoryPickerPanel");
+      const currentInd = document.getElementById("industryFilter").value;
+
+      if (activeCategoryTab === "tokutei") {
+        panel.innerHTML = `
+          <div class="cat-group-title">${escapeHtml(t().tabTokutei)}</div>
+          <div class="cat-chip-grid">
+            ${TOKUTEI_INDUSTRIES.map(item => {
+              const sel = currentInd === item.key ? "selected" : "";
+              return `<button type="button" class="cat-chip ${sel}" onclick="pickIndustryFromNav('${escapeAttr(item.key)}')">${escapeHtml(getIndustryLabel(item.key))}</button>`;
+            }).join("")}
+          </div>
+        `;
+        return;
+      }
+
+      if (activeCategoryTab === "engineer") {
+        panel.innerHTML = ENGINEER_GROUPS.map(grp => `
+          <div class="cat-group-title">${escapeHtml(currentLang === "ja" ? grp.ja : grp.vi)}</div>
+          <div class="cat-chip-grid">
+            ${grp.items.map(item => {
+              const sel = currentInd === item.key ? "selected" : "";
+              return `<button type="button" class="cat-chip ${sel}" onclick="pickIndustryFromNav('${escapeAttr(item.key)}')">${escapeHtml(getIndustryLabel(item.key))}</button>`;
+            }).join("")}
+          </div>
+        `).join("");
+      }
+    }
+
+    function pickIndustryFromNav(industryKey) {
+      document.getElementById("industryFilter").value = industryKey;
+      document.getElementById("categoryPickerPanel").classList.remove("open");
+      updateCategoryIndicator();
+      renderJobs();
+    }
+
+    function onIndustryDropdownChange() {
+      updateCategoryIndicator();
+      if (document.getElementById("categoryPickerPanel").classList.contains("open")) {
+        renderCategoryPickerPanel();
+      }
+      renderJobs();
+    }
+
+    function populateIndustrySelect() {
+      const sel = document.getElementById("industryFilter");
+      const currentVal = sel.value;
+      const tr = t();
+      sel.innerHTML = `<option value="">${escapeHtml(tr.allIndustry)}</option>` +
+        getAllIndustries().map(item =>
+          `<option value="${escapeHtml(item.key)}">${escapeHtml(getIndustryLabel(item.key))}</option>`
+        ).join("");
+      if ([...sel.options].some(o => o.value === currentVal)) {
+        sel.value = currentVal;
+      }
+    }
+
+    function populateSalarySelect() {
+      const sel = document.getElementById("salaryFilter");
+      const currentVal = sel.value;
+      sel.innerHTML = SALARY_RANGES.map(item =>
+        `<option value="${escapeHtml(item.key)}">${escapeHtml(currentLang === "ja" ? item.ja : item.vi)}</option>`
+      ).join("");
+      if ([...sel.options].some(o => o.value === currentVal)) {
+        sel.value = currentVal;
+      }
+    }
+
+    function populateEditorSelects() {
+      const indSel = document.getElementById("editIndustry");
+      const prefSel = document.getElementById("editPref");
+      const prevInd = indSel.value;
+      const prevPref = prefSel.value;
+
+      indSel.innerHTML = getAllIndustries().map(item =>
+        `<option value="${escapeHtml(item.key)}">${escapeHtml(getIndustryLabel(item.key))}</option>`
+      ).join("");
+
+      const allPrefs = [];
+      REGIONS.forEach(reg => reg.prefs.forEach(p => allPrefs.push(p)));
+      prefSel.innerHTML = allPrefs.map(p =>
+        `<option value="${escapeHtml(p.key)}">${escapeHtml(getPrefLabel(p.key))} (${escapeHtml(p.ja)})</option>`
+      ).join("");
+
+      if (prevInd) indSel.value = prevInd;
+      if (prevPref) prefSel.value = prevPref;
+    }
+
+    function updateLocationTriggerLabel() {
+      const tr = t();
+      const labelEl = document.getElementById("locationTriggerLabel");
+      if (selectedLocation.type === "all") {
+        labelEl.textContent = tr.allLocation;
+      } else if (selectedLocation.type === "region") {
+        const reg = REGIONS.find(r => r.id === selectedLocation.value);
+        labelEl.textContent = reg ? getRegionLabel(reg) : tr.allLocation;
+      } else if (selectedLocation.type === "pref") {
+        labelEl.textContent = getPrefLabel(selectedLocation.value);
+      }
+    }
+
+    function renderLocationPanel() {
+      const tr = t();
+      const panel = document.getElementById("locationPanel");
+      const allSelected = selectedLocation.type === "all" ? "selected" : "";
+      let html = `<button type="button" class="loc-all-btn ${allSelected}" onclick="selectLocation('all', '')">${escapeHtml(tr.allRegionsOption)}</button>`;
+
+      REGIONS.forEach(reg => {
+        const isExpanded = !!expandedRegions[reg.id];
+        const isRegSelected = selectedLocation.type === "region" && selectedLocation.value === reg.id ? "selected" : "";
+        const regDisplay = currentLang === "ja" ? reg.ja : `${getRegionLabel(reg)} (${reg.ja})`;
+
+        html += `
+          <div class="region-item">
+            <div class="region-header">
+              <button type="button" class="region-select-btn ${isRegSelected}" onclick="selectLocation('region', '${reg.id}')">
+                ${escapeHtml(regDisplay)}
+              </button>
+              <button type="button" class="region-toggle-btn" aria-expanded="${isExpanded}" onclick="toggleRegionExpand(event, '${reg.id}')">
+                ${isExpanded ? tr.collapseBtn : tr.expandBtn}
+              </button>
+            </div>
+            <div class="pref-list ${isExpanded ? "expanded" : ""}">
+              ${reg.prefs.map(p => {
+                const isPrefSelected = selectedLocation.type === "pref" && selectedLocation.value === p.key ? "selected" : "";
+                const prefDisplay = currentLang === "ja" ? p.ja : `${getPrefLabel(p.key)} / ${p.ja}`;
+                return `
+                  <button type="button" class="pref-btn ${isPrefSelected}" onclick="selectLocation('pref', '${p.key}')">
+                    ${escapeHtml(prefDisplay)}
+                  </button>
+                `;
+              }).join("")}
+            </div>
+          </div>
+        `;
+      });
+
+      panel.innerHTML = html;
+    }
+
+    function toggleLocationPanel(event) {
+      event.stopPropagation();
+      document.getElementById("locationPanel").classList.toggle("open");
+    }
+
+    document.addEventListener("click", event => {
+      const wrapper = document.getElementById("locationDropdownWrapper");
+      if (wrapper && !wrapper.contains(event.target)) {
+        document.getElementById("locationPanel").classList.remove("open");
+      }
+    });
+
+    function toggleRegionExpand(event, regId) {
+      event.stopPropagation();
+      expandedRegions[regId] = !expandedRegions[regId];
+      renderLocationPanel();
+    }
+
+    function selectLocation(type, value) {
+      selectedLocation = { type, value };
+      if (type === "region" && value) expandedRegions[value] = true;
+      updateLocationTriggerLabel();
+      renderLocationPanel();
+      document.getElementById("locationPanel").classList.remove("open");
+      renderJobs();
+    }
+
+    function resetFilters() {
+      activeCategoryTab = "";
+      document.getElementById("tabTokutei").classList.remove("active");
+      document.getElementById("tabEngineer").classList.remove("active");
+      document.getElementById("categoryPickerPanel").classList.remove("open");
+      document.getElementById("searchInput").value = "";
+      document.getElementById("industryFilter").value = "";
+      document.getElementById("salaryFilter").value = "";
+      selectedLocation = { type: "all", value: "" };
+      updateLocationTriggerLabel();
+      renderLocationPanel();
+      updateCategoryIndicator();
+      renderJobs();
+    }
+
+    function matchesLocationFilter(job) {
+      if (selectedLocation.type === "all") return true;
+      const prefKey = (job.prefecture || "").toLowerCase();
+      const jpPref = getJapanesePrefLabel(job.prefecture).toLowerCase();
+      const locBlob = `${job.prefecture || ""} ${jpPref} ${job.i18n?.vi?.workplace || ""} ${job.i18n?.ja?.workplace || ""}`.toLowerCase();
+
+      if (selectedLocation.type === "pref") {
+        const target = selectedLocation.value.toLowerCase();
+        const targetJp = getJapanesePrefLabel(selectedLocation.value).toLowerCase();
+        return prefKey === target || locBlob.includes(target) || (targetJp && locBlob.includes(targetJp));
+      }
+
+      if (selectedLocation.type === "region") {
+        const reg = REGIONS.find(r => r.id === selectedLocation.value);
+        if (!reg) return true;
+        return reg.prefs.some(p => {
+          const pKey = p.key.toLowerCase();
+          const pJp = p.ja.toLowerCase();
+          return prefKey === pKey || locBlob.includes(pKey) || locBlob.includes(pJp);
+        });
+      }
+      return true;
+    }
+
+    function parseManYenFromSalary(salaryStr) {
+      if (!salaryStr) return null;
+      const s = String(salaryStr);
+      const manMatches = [...s.matchAll(/(\d+(?:\.\d+)?)\s*万/g)].map(m => parseFloat(m[1]));
+      if (manMatches.length) return Math.max(...manMatches);
+      const yenNums = [...s.matchAll(/(\d{2,3}(?:,\d{3})+|\d{5,7})/g)]
+        .map(m => parseInt(m[1].replace(/,/g, ""), 10))
+        .filter(n => n >= 100000);
+      if (yenNums.length) return Math.max(...yenNums) / 10000;
+      return null;
+    }
+
+    function matchesSalaryFilter(job, rangeKey) {
+      if (!rangeKey) return true;
+      const d = getJobData(job, currentLang);
+      const val = parseManYenFromSalary(d.salary);
+      if (val === null) return false;
+      if (rangeKey === "15-20") return val >= 15 && val <= 20;
+      if (rangeKey === "20-25") return val > 20 && val <= 25;
+      if (rangeKey === "25-30") return val > 25 && val <= 30;
+      if (rangeKey === "30+") return val >= 30;
+      return true;
+    }
+
+    function extractMatchedCountries(natStr) {
+      const raw = String(natStr || "").trim();
+      if (!raw) return [];
+      const tokens = raw.split(/[,、/・\s]+/).map(s => s.trim().toLowerCase()).filter(Boolean);
+      const matched = [];
+      const seen = new Set();
+
+      COUNTRIES.forEach(c => {
+        const hit = c.aliases.some(alias =>
+          tokens.includes(alias.toLowerCase()) ||
+          new RegExp(`(^|[^a-zA-Z])${alias.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^a-zA-Z]|$)`, "i").test(raw)
+        );
+        if (hit && !seen.has(c.code)) {
+          seen.add(c.code);
+          matched.push(c);
+        }
+      });
+      return matched;
+    }
+
+    function formatNationalityCompact(natStr) {
+      const tr = t();
+      const raw = (natStr || "").trim();
+      if (!raw || raw === "—" || /không giới hạn|国籍不問|不問|すべて/i.test(raw)) {
+        return `<span>${escapeHtml(tr.noNationalityLimit)}</span>`;
+      }
+      const matched = extractMatchedCountries(raw);
+      if (matched.length) {
+        return `<span class="nat-badge-list">${matched.map(renderCountryBadgeHtml).join("")}</span>`;
+      }
+      return `<span>${escapeHtml(raw)}</span>`;
+    }
+
+    function formatGenderCompact(genderStr) {
+      const g = (genderStr || "").trim().toLowerCase();
+      if (/nam\s*&\s*nữ|nam\/nữ|男女|不問|both/i.test(g)) return "Nam/Nữ";
+      if (/nữ|女性|女/i.test(g)) return "Nữ";
+      return "Nam";
+    }
+
+    function formatBonusRaiseCompact(bonusStr, raiseStr) {
+      const tr = t();
+      const b = (bonusStr || "").trim();
+      const r = (raiseStr || "").trim();
+      const hasBonus = b && b !== "—" && !/không|なし|無/i.test(b);
+      const hasRaise = r && r !== "—" && !/không|なし|無/i.test(r);
+
+      const bText = hasBonus ? b : tr.noLabel;
+      const rText = hasRaise ? r : tr.noLabel;
+      if (!hasBonus && !hasRaise) return tr.noLabel;
+      return `${bText} / ${rText}`;
+    }
+
+    function renderJobs() {
+      const tr = t();
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      const ind = document.getElementById("industryFilter").value;
+      const salRange = document.getElementById("salaryFilter").value;
+      const grid = document.getElementById("jobGrid");
+
+      const filtered = JOBS.filter(job => {
+        if (activeCategoryTab && job.categoryType !== activeCategoryTab) return false;
+        if (ind && job.industry !== ind) return false;
+        if (!matchesLocationFilter(job)) return false;
+        if (!matchesSalaryFilter(job, salRange)) return false;
+        if (!q) return true;
+
+        const natAliases = [
+          ...extractMatchedCountries(job.i18n?.vi?.nationality || ""),
+          ...extractMatchedCountries(job.i18n?.ja?.nationality || "")
+        ].flatMap(c => [c.code, c.vi, c.ja]);
+
+        const blob = [
+          job.code,
+          job.industry,
+          getIndustryLabel(job.industry, "vi"),
+          getIndustryLabel(job.industry, "ja"),
+          job.prefecture,
+          getJapanesePrefLabel(job.prefecture),
+          ...natAliases,
+          ...Object.values(job.i18n?.vi || {}),
+          ...Object.values(job.i18n?.ja || {})
+        ].join(" ").toLowerCase();
+
+        return blob.includes(q);
+      });
+
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="card"><p>${escapeHtml(tr.noResult)}</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(job => {
+        const idx = JOBS.indexOf(job);
+        const d = getJobData(job, currentLang);
+        const statusClass = getStatusClass(job.status);
+        const closedClass = job.status === "Đóng đơn" ? "is-closed" : "";
+        const prefCompact = getPrefLabel(job.prefecture, currentLang);
+        const indCompact = getIndustryLabel(job.industry, currentLang);
+        const titleLine = `${job.code} | ${prefCompact} | ${indCompact}`;
+
+        return `
+          <article id="job-card-${escapeAttr(job.code)}" class="card ${closedClass}">
+            <div>
+              <div class="card-top">
+                <h2 class="card-title-compact">${escapeHtml(titleLine)}</h2>
+                <span class="status-badge ${statusClass}">${escapeHtml(getStatusText(job.status))}</span>
+              </div>
+
+              <div class="compact-list">
+                <div class="compact-row"><strong>${escapeHtml(tr.cardLabels.salary)}:</strong> <span>${escapeHtml(d.salary || "—")}</span></div>
+                <div class="compact-row"><strong>${escapeHtml(tr.cardLabels.nationality)}:</strong> ${formatNationalityCompact(d.nationality)}</div>
+                <div class="compact-row"><strong>${escapeHtml(tr.cardLabels.gender)}:</strong> <span>${escapeHtml(formatGenderCompact(d.gender))}</span></div>
+                <div class="compact-row"><strong>${escapeHtml(tr.cardLabels.bonusRaise)}:</strong> <span>${escapeHtml(formatBonusRaiseCompact(d.bonus, d.raise))}</span></div>
+              </div>
+
+              ${isAdminVerified ? `
+                <div class="admin-card-bar">
+                  <select aria-label="Status ${escapeAttr(job.code)}" onchange="updateJobStatus(${idx}, this.value)">
+                    <option value="Đang tuyển" ${job.status === "Đang tuyển" ? "selected" : ""}>${escapeHtml(tr.statusLabels["Đang tuyển"])}</option>
+                    <option value="Đóng đơn" ${job.status === "Đóng đơn" ? "selected" : ""}>${escapeHtml(tr.statusLabels["Đóng đơn"])}</option>
+                  </select>
+                  <button type="button" class="btn-secondary" onclick="openEditorModal(${idx})">${escapeHtml(tr.editAction)}</button>
+                  <button type="button" class="btn-danger-sm" onclick="deleteJob(${idx})">${escapeHtml(tr.deleteAction)}</button>
+                </div>
+              ` : ""}
+            </div>
+
+            <div class="card-actions-row">
+              <button type="button" class="btn-primary" onclick="copyJob('${escapeAttr(job.code)}')">${escapeHtml(tr.copyBtn)}</button>
+              <button type="button" class="btn-detail" onclick="openDetailModal('${escapeAttr(job.code)}')">${escapeHtml(tr.detailBtn)}</button>
+              <button type="button" class="btn-snap" onclick="captureCardImage('${escapeAttr(job.code)}')">${escapeHtml(tr.snapCardBtn)}</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function buildDetailRows17(job) {
+      const tr = t();
+      const d = getJobData(job, currentLang);
+      const fields = tr.detailFields;
+      const values = [
+        getStatusText(job.status),
+        d.title,
+        job.code,
+        getIndustryLabel(job.industry),
+        getPrefLabel(job.prefecture),
+        d.workplace,
+        d.jobDesc,
+        d.nationality || tr.noNationalityLimit,
+        d.japanese,
+        d.headcount,
+        d.salary,
+        d.bonus,
+        d.raise,
+        d.overtime,
+        d.housing,
+        d.shift,
+        [d.experience, d.note].filter(Boolean).join(" | ")
+      ];
+
+      return fields.map((label, idx) => ({
+        label,
+        value: values[idx] && String(values[idx]).trim() ? String(values[idx]).trim() : "—"
+      }));
+    }
+
+    function openDetailModal(code) {
+      const job = JOBS.find(item => item.code === code);
+      if (!job) return;
+      activeDetailJob = job;
+
+      const tr = t();
+      const rows = buildDetailRows17(job);
+      document.getElementById("detailModalBody").innerHTML = `
+        <table class="detail-table">
+          <thead>
+            <tr>
+              <th>${escapeHtml(tr.colItem)}</th>
+              <th>${escapeHtml(tr.colValue)}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr>
+                <th>${escapeHtml(r.label)}</th>
+                <td>${escapeHtml(r.value)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+
+      document.getElementById("detailModal").classList.add("show");
+    }
+
+    function printSingleJob(code) {
+      const targetCode = code || activeDetailJob?.code;
+      const job = JOBS.find(item => item.code === targetCode);
+      if (!job) return;
+
+      const tr = t();
+      const rows = buildDetailRows17(job);
+      document.getElementById("printOnlyArea").innerHTML = `
+        <div class="print-doc-header">
+          <div class="print-doc-brand">${escapeHtml(tr.brand)}</div>
+          <div class="print-doc-title">${escapeHtml(tr.detailHeading)} — ${escapeHtml(job.code)}</div>
+        </div>
+        <table class="print-table">
+          <tbody>
+            ${rows.map(r => `
+              <tr>
+                <th>${escapeHtml(r.label)}</th>
+                <td>${escapeHtml(r.value)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+      window.print();
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove("show");
+    }
+
+    function handleBackdropClick(event, modalId) {
+      if (event.target.id === modalId) closeModal(modalId);
+    }
+
+    function buildShareText(job) {
+      const tr = t();
+      const d = getJobData(job, currentLang);
+      const lines = [
+        `${job.code} | ${getPrefLabel(job.prefecture)} | ${getIndustryLabel(job.industry)}`,
+        `${tr.detailFields[0]}: ${getStatusText(job.status)}`,
+        `${tr.detailFields[1]}: ${d.title}`,
+        `${tr.detailFields[5]}: ${d.workplace}`,
+        `${tr.detailFields[6]}: ${d.jobDesc}`,
+        `${tr.detailFields[7]}: ${d.nationality || tr.noNationalityLimit}`,
+        `${tr.cardLabels.gender}: ${formatGenderCompact(d.gender)}`,
+        `${tr.detailFields[8]}: ${d.japanese}`,
+        `${tr.detailFields[9]}: ${d.headcount}`,
+        `${tr.detailFields[10]}: ${d.salary}`,
+        `${tr.detailFields[11]}: ${d.bonus}`,
+        `${tr.detailFields[12]}: ${d.raise}`,
+        `${tr.detailFields[13]}: ${d.overtime}`,
+        `${tr.detailFields[14]}: ${d.housing}`,
+        `${tr.detailFields[15]}: ${d.shift}`,
+        d.note ? `${tr.detailFields[16]}: ${d.note}` : ""
+      ].filter(Boolean);
+      return lines.join("\n");
+    }
+
+    function copyJob(code) {
+      const job = JOBS.find(item => item.code === code);
+      if (!job) return;
+      navigator.clipboard?.writeText(buildShareText(job));
+      showToast(t().copiedToast);
+    }
+
+    function copyCurrentDetailJob() {
+      if (!activeDetailJob) return;
+      copyJob(activeDetailJob.code);
+    }
+
+    async function exportElementAsImage(element, filename) {
+      const tr = t();
+      if (typeof window.html2canvas !== "function" || !element) {
+        showToast(tr.snapFallbackToast);
+        return;
+      }
+      try {
+        const canvas = await window.html2canvas(element, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: element.scrollWidth,
+          windowHeight: element.scrollHeight
+        });
+        const link = document.createElement("a");
+        link.download = filename;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+        showToast(tr.snapSuccessToast);
+      } catch (err) {
+        showToast(tr.snapFallbackToast);
+      }
+    }
+
+    function captureCardImage(code) {
+      exportElementAsImage(document.getElementById(`job-card-${code}`), `Minami_Kyujin_${code}_${currentLang}.png`);
+    }
+
+    function captureDetailImage() {
+      if (!activeDetailJob) return;
+      const box = document.getElementById("detailModalBox");
+      const prevMaxH = box.style.maxHeight;
+      const prevOverflow = box.style.overflowY;
+      box.style.maxHeight = "none";
+      box.style.overflowY = "visible";
+
+      exportElementAsImage(box, `Minami_Kyujin_Detail_${activeDetailJob.code}_${currentLang}.png`).finally(() => {
+        box.style.maxHeight = prevMaxH;
+        box.style.overflowY = prevOverflow;
+      });
+    }
+
+    function handleAdminAuthClick() {
+      if (isAdminVerified) {
+        isAdminVerified = false;
+        closeModal("updateManagerModal");
+        showToast(t().adminLoggedOutToast);
+        syncAllUI();
+        return;
+      }
+      document.getElementById("adminPassInput").value = "";
+      document.getElementById("loginModal").classList.add("show");
+    }
+
+    function verifyAdminPass() {
+      const code = document.getElementById("adminPassInput").value;
+      if (code === getAdminPasscode()) {
+        isAdminVerified = true;
+        closeModal("loginModal");
+        showToast(t().adminEnabledToast);
+        syncAllUI();
+      } else {
+        showToast(t().adminWrongPassToast);
+      }
+    }
+
+    function promptChangePasscode() {
+      if (!isAdminVerified) return;
+      const tr = t();
+      const promptMsg = currentLang === "ja"
+        ? "新しい管理者認証コードを入力してください："
+        : "Nhập mã xác thực quản trị viên mới:";
+      const nextPass = window.prompt(promptMsg, getAdminPasscode());
+      if (nextPass === null) return;
+      const trimmed = nextPass.trim();
+      if (!trimmed) {
+        showToast(tr.passEmptyToast);
+        return;
+      }
+      setAdminPasscode(trimmed);
+      showToast(tr.passChangedToast);
+    }
+
+    async function restoreDefaultJobs() {
+      if (!isAdminVerified) return;
+      const confirmMsg = currentLang === "ja"
+        ? "初期求人データに復元しますか？（現在の追加・編集内容は上書きされます）"
+        : "Khôi phục dữ liệu đơn tuyển gốc? (Các thay đổi hiện tại sẽ được ghi đè)";
+      if (!window.confirm(confirmMsg)) return;
+      JOBS = cloneJobs(INITIAL_JOBS);
+      saveCachedJobs();
+      try {
+        await apiSeedInitialJobs(JOBS);
+      } catch (e) {
+        showToast(t().cloudSyncErrorToast);
+      }
+      showToast(t().restoredToast);
+      renderJobs();
+      renderUpdateManagerList();
+    }
+
+    function handleUpdateClick() {
+      if (!isAdminVerified) {
+        document.getElementById("adminPassInput").value = "";
+        document.getElementById("loginModal").classList.add("show");
+        return;
+      }
+      renderUpdateManagerList();
+      document.getElementById("updateManagerModal").classList.add("show");
+    }
+
+    function renderUpdateManagerList() {
+      const tr = t();
+      const body = document.getElementById("updateJobListBody");
+      body.innerHTML = `
+        <table class="detail-table">
+          <thead>
+            <tr>
+              <th>${escapeHtml(tr.detailFields[2])}</th>
+              <th>${escapeHtml(tr.detailFields[0])}</th>
+              <th>${escapeHtml(tr.colValue)}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${JOBS.map((job, idx) => {
+              const d = getJobData(job, currentLang);
+              return `
+                <tr>
+                  <td><strong>${escapeHtml(job.code)}</strong></td>
+                  <td>
+                    <select onchange="updateJobStatus(${idx}, this.value)">
+                      <option value="Đang tuyển" ${job.status === "Đang tuyển" ? "selected" : ""}>${escapeHtml(tr.statusLabels["Đang tuyển"])}</option>
+                      <option value="Đóng đơn" ${job.status === "Đóng đơn" ? "selected" : ""}>${escapeHtml(tr.statusLabels["Đóng đơn"])}</option>
+                    </select>
+                  </td>
+                  <td>
+                    <div style="margin-bottom:6px;">${escapeHtml(`${getPrefLabel(job.prefecture)} | ${getIndustryLabel(job.industry)} — ${d.title}`)}</div>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                      <button type="button" class="btn-secondary" onclick="openEditorModal(${idx})">${escapeHtml(tr.editAction)}</button>
+                      <button type="button" class="btn-danger-sm" onclick="deleteJob(${idx})">${escapeHtml(tr.deleteAction)}</button>
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    async function updateJobStatus(index, newStatus) {
+      if (!isAdminVerified || !JOBS[index]) return;
+      JOBS[index].status = newStatus === "Đóng đơn" ? "Đóng đơn" : "Đang tuyển";
+      saveCachedJobs();
+      renderJobs();
+      if (document.getElementById("updateManagerModal").classList.contains("show")) {
+        renderUpdateManagerList();
+      }
+      try {
+        await apiUpsertJob(JOBS[index]);
+        showToast(t().statusUpdatedToast);
+      } catch (e) {
+        showToast(t().cloudSyncErrorToast);
+      }
+    }
+
+    async function deleteJob(index) {
+      if (!isAdminVerified || !JOBS[index]) return;
+      const [removed] = JOBS.splice(index, 1);
+      saveCachedJobs();
+      renderJobs();
+      if (document.getElementById("updateManagerModal").classList.contains("show")) {
+        renderUpdateManagerList();
+      }
+      try {
+        await apiDeleteJob(removed);
+        showToast(t().deletedToast);
+      } catch (e) {
+        showToast(t().cloudSyncErrorToast);
+      }
+    }
+
+    function openEditorModal(index = null) {
+      if (!isAdminVerified) return;
+      const tr = t();
+      const isEdit = typeof index === "number" && JOBS[index];
+      document.getElementById("editorModalTitle").textContent = isEdit ? tr.editorEditTitle : tr.editorAddTitle;
+      document.getElementById("editJobIndex").value = isEdit ? String(index) : "";
+
+      const base = isEdit ? JOBS[index] : {
+        code: "",
+        categoryType: activeCategoryTab === "engineer" ? "engineer" : "tokutei",
+        status: "Đang tuyển",
+        industry: "Kaigo",
+        prefecture: "Tokyo",
+        i18n: { vi: {}, ja: {} }
+      };
+      const d = getJobData(base, currentLang);
+
+      document.getElementById("editCode").value = base.code || "";
+      document.getElementById("editStatus").value = base.status === "Đóng đơn" ? "Đóng đơn" : "Đang tuyển";
+      document.getElementById("editCategoryType").value = base.categoryType === "engineer" ? "engineer" : "tokutei";
+      document.getElementById("editTitle").value = d.title || "";
+      document.getElementById("editIndustry").value = base.industry || "Kaigo";
+      document.getElementById("editPref").value = base.prefecture || "Tokyo";
+      document.getElementById("editLocation").value = d.workplace || "";
+      document.getElementById("editNat").value = d.nationality || "";
+      document.getElementById("editGender").value = formatGenderCompact(d.gender);
+      document.getElementById("editHeadcount").value = d.headcount || "";
+      document.getElementById("editSalary").value = d.salary || "";
+      document.getElementById("editBonus").value = d.bonus || "";
+      document.getElementById("editRaise").value = d.raise || "";
+      document.getElementById("editOvertime").value = d.overtime || "";
+      document.getElementById("editHousing").value = d.housing || "";
+      document.getElementById("editShift").value = d.shift || "";
+      document.getElementById("editReq").value = d.experience || "";
+      document.getElementById("editNote").value = d.note || "";
+
+      document.getElementById("editorModal").classList.add("show");
+    }
+
+    async function saveEditedJob(event) {
+      event.preventDefault();
+      if (!isAdminVerified) return;
+
+      const idxVal = document.getElementById("editJobIndex").value;
+      const code = document.getElementById("editCode").value.trim();
+      const status = document.getElementById("editStatus").value === "Đóng đơn" ? "Đóng đơn" : "Đang tuyển";
+      const categoryType = document.getElementById("editCategoryType").value === "engineer" ? "engineer" : "tokutei";
+      const industry = document.getElementById("editIndustry").value;
+      const prefecture = document.getElementById("editPref").value;
+
+      const patch = {
+        title: document.getElementById("editTitle").value.trim(),
+        workplace: document.getElementById("editLocation").value.trim(),
+        jobDesc: document.getElementById("editTitle").value.trim(),
+        nationality: document.getElementById("editNat").value.trim(),
+        gender: document.getElementById("editGender").value,
+        headcount: document.getElementById("editHeadcount").value.trim(),
+        salary: document.getElementById("editSalary").value.trim(),
+        bonus: document.getElementById("editBonus").value.trim(),
+        raise: document.getElementById("editRaise").value.trim(),
+        overtime: document.getElementById("editOvertime").value.trim(),
+        housing: document.getElementById("editHousing").value.trim(),
+        shift: document.getElementById("editShift").value.trim(),
+        experience: document.getElementById("editReq").value.trim(),
+        note: document.getElementById("editNote").value.trim()
+      };
+
+      let savedJob;
+      if (idxVal !== "" && JOBS[Number(idxVal)]) {
+        const target = JOBS[Number(idxVal)];
+        target.code = code;
+        target.status = status;
+        target.categoryType = categoryType;
+        target.industry = industry;
+        target.prefecture = prefecture;
+        target.id = target.id || makeJobId(target);
+        target.i18n[currentLang] = { ...(target.i18n[currentLang] || {}), ...patch };
+        savedJob = target;
+      } else {
+        savedJob = {
+          id: `${makeJobId({ code, prefecture, industry })}-${Date.now()}`,
+          code,
+          categoryType,
+          status,
+          company: "Minami Kyujn Share",
+          industry,
+          prefecture,
+          link: "",
+          i18n: {
+            vi: { japanese: "—", ...patch },
+            ja: { japanese: "—", ...patch }
+          }
+        };
+        JOBS.unshift(savedJob);
+      }
+
+      saveCachedJobs();
+      closeModal("editorModal");
+      renderJobs();
+      if (document.getElementById("updateManagerModal").classList.contains("show")) {
+        renderUpdateManagerList();
+      }
+      try {
+        await apiUpsertJob(savedJob);
+        showToast(t().savedToast);
+      } catch (e) {
+        showToast(t().cloudSyncErrorToast);
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function escapeAttr(str) {
+      return escapeHtml(str).replace(/`/g, "&#96;");
+    }
+
+    async function initApp() {
+      syncAllUI();
+      if (!isSupabaseConfigured()) return;
+      try {
+        const remoteJobs = await apiFetchJobs();
+        if (Array.isArray(remoteJobs)) {
+          if (remoteJobs.length > 0) {
+            JOBS = remoteJobs;
+            saveCachedJobs();
+            renderJobs();
+          } else if (JOBS.length > 0) {
+            await apiSeedInitialJobs(JOBS);
+          }
+        }
+      } catch (e) {
+        // Giữ dữ liệu cache nếu mất kết nối tạm thời
+      }
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
