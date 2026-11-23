@@ -871,7 +871,8 @@
     }
 
     function formatMultilineHtml(text) {
-      return escapeHtml(text || '').replace(/?
+      return escapeHtml(text || '').replace(/
+?
 /g, '<br>');
     }
 
