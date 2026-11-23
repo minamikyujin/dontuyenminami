@@ -1,0 +1,2666 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MINAMI KYUJIN SHARE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Be Vietnam Pro', 'Noto Sans JP', sans-serif;
+      background-color: #f3f6f9;
+      color: #1e293b;
+    }
+    .job-header-mint {
+      background-color: #dcfce7;
+      border-bottom: 1px solid #bbf7d0;
+    }
+    .auto-textarea {
+      overflow-y: hidden;
+      resize: none;
+      min-height: 40px;
+      line-height: 1.45;
+    }
+    .job-table th {
+      width: 36%;
+      background-color: #f8fafc;
+      color: #475569;
+      font-weight: 600;
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e2e8f0;
+      border-right: 1px solid #e2e8f0;
+      vertical-align: top;
+      font-size: 0.84rem;
+    }
+    .job-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #0f172a;
+      vertical-align: top;
+      font-size: 0.86rem;
+      word-break: break-word;
+    }
+    .job-table tr:last-child th,
+    .job-table tr:last-child td {
+      border-bottom: none;
+    }
+    .modal-backdrop {
+      background-color: rgba(15, 23, 42, 0.58);
+      backdrop-filter: blur(2px);
+    }
+    .card-hover {
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -8px rgba(15, 23, 42, 0.12);
+    }
+    .flag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .flag-chip-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 9px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+    .flag-chip-btn.selected {
+      background: #ecfdf5;
+      border-color: #10b981;
+      color: #065f46;
+      box-shadow: 0 0 0 1px #10b981;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- HEADER (Hạng mục 1 & 4.1 / 4.2 / 4.4: Gọn gàng, phân quyền Admin rõ ràng, hỗ trợ 2 chế độ ngôn ngữ VI / JP) -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
+      <!-- Brand -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
+          M
+        </div>
+        <div>
+          <h1 id="siteMainTitle" class="text-lg sm:text-xl font-bold tracking-tight text-slate-900">MINAMI KYUJIN SHARE</h1>
+          <p id="pageSubtitleDesc" class="text-xs text-slate-500">Hệ thống chia sẻ thông tin đơn tuyển dụng Nhật Bản song ngữ Việt – Nhật</p>
+        </div>
+      </div>
+
+      <!-- Right Controls: Language Switch + Admin & Management Tools -->
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Language Switcher (Ảnh 0 & Ảnh 4.1) -->
+        <div class="inline-flex rounded-lg border border-slate-300 bg-slate-100 p-0.5">
+          <button id="btnLangVi" onclick="setLanguage('vi')" class="px-3 py-1.5 text-xs font-semibold rounded-md bg-emerald-600 text-white shadow-sm transition">
+            Tiếng Việt
+          </button>
+          <button id="btnLangJp" onclick="setLanguage('jp')" class="px-3 py-1.5 text-xs font-semibold rounded-md text-slate-700 hover:text-slate-900 transition">
+            日本語
+          </button>
+        </div>
+
+        <!-- Admin Controls (Only visible when logged in as Admin) -->
+        <div id="adminHeaderTools" class="hidden flex-wrap items-center gap-2">
+          <button onclick="openAiImportModal()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition">
+            <span>✨</span>
+            <span id="lblBtnAiImport">Nhập nhanh AI (5–10 đơn)</span>
+          </button>
+
+          <button onclick="openJobFormModal(null)" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition">
+            <span>＋</span>
+            <span id="lblBtnAddJob">Thêm đơn mới</span>
+          </button>
+
+          <button onclick="openStatsModal()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold shadow-sm transition">
+            <span>📊</span>
+            <span id="lblBtnStats">Thống kê công ty</span>
+          </button>
+
+          <button onclick="openSupabaseModal()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-sky-300 bg-sky-50 hover:bg-sky-100 text-sky-800 text-xs font-semibold transition">
+            <span>☁️</span>
+            <span id="lblBtnSupabase">Đồng bộ Supabase</span>
+          </button>
+        </div>
+
+        <!-- Admin Login / Logout Button (Ảnh 4.2) -->
+        <button id="btnAdminToggle" onclick="handleAdminAuthClick()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-800 text-xs font-semibold shadow-sm transition">
+          <span id="iconAdminLock">🔒</span>
+          <span id="lblAdminToggle">Đăng nhập Admin</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- FILTER & STATUS BAR (Hạng mục 1: Tinh gọn thanh nút, loại bỏ nút thừa Pull/Push/JSON khỏi thanh chính) -->
+  <section class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-3">
+    <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
+        <!-- Search -->
+        <div class="lg:col-span-2">
+          <label id="lblFilterSearch" class="block text-xs font-semibold text-slate-600 mb-1">Tìm kiếm (Mã đơn ID, ngành nghề, công việc, tỉnh)</label>
+          <input id="filterSearch" type="text" oninput="renderJobs()" placeholder="VD: 194, Tokyo, Kaigo, Thực phẩm..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+
+        <!-- Industry / Ngành nghề Filter (Hạng mục 3 & 3.1) -->
+        <div>
+          <label id="lblFilterIndustry" class="block text-xs font-semibold text-slate-600 mb-1">Ngành nghề / 職種</label>
+          <select id="filterIndustry" onchange="renderJobs()" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="">Tất cả ngành nghề</option>
+          </select>
+        </div>
+
+        <!-- Company Filter (Admin only or optional) -->
+        <div id="filterCompanyWrapper" class="hidden">
+          <label id="lblFilterCompany" class="block text-xs font-semibold text-slate-600 mb-1">Công ty tiếp nhận</label>
+          <select id="filterCompany" onchange="renderJobs()" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="">Tất cả công ty</option>
+          </select>
+        </div>
+
+        <!-- Status Filter -->
+        <div>
+          <label id="lblFilterStatus" class="block text-xs font-semibold text-slate-600 mb-1">Trạng thái tuyển</label>
+          <select id="filterStatus" onchange="renderJobs()" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="ACTIVE_ALL">Tất cả (Chưa xóa)</option>
+            <option value="OPEN">Đang tuyển / 募集中</option>
+            <option value="CLOSED">Đóng đơn / 募集終了</option>
+            <option value="DELETED" id="optFilterDeleted" class="hidden">Đã xóa mềm / 削除済み</option>
+          </select>
+        </div>
+
+        <!-- Housing & Gender Filter -->
+        <div>
+          <label id="lblFilterHousing" class="block text-xs font-semibold text-slate-600 mb-1">Nhà ở & Giới tính</label>
+          <select id="filterExtra" onchange="renderJobs()" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="">Tất cả</option>
+            <option value="HOUSING_YES">Có hỗ trợ nhà ở / 住居あり</option>
+            <option value="GENDER_MALE">Tuyển Nam / 男性</option>
+            <option value="GENDER_FEMALE">Tuyển Nữ / 女性</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Minimal Summary Bar (Hạng mục 1: Đã loại bỏ các nút thừa Pull/Push/Xuất JSON/Nhập JSON khỏi thanh chính) -->
+      <div class="mt-3 pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex flex-wrap items-center gap-3 text-slate-600">
+          <span id="summaryCounts" class="font-medium">Đang hiển thị: 0 đơn</span>
+          <span id="supabaseStatusBadge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 font-medium">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            <span>Supabase: Đang kiểm tra...</span>
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="resetFilters()" class="px-2.5 py-1 rounded border border-slate-200 hover:bg-slate-100 text-slate-600 font-medium transition">
+            ↺ <span id="lblResetFilter">Đặt lại bộ lọc</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JOB CARDS GRID -->
+  <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-1">
+    <div id="jobsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+      <!-- Cards rendered by JS -->
+    </div>
+    <div id="emptyState" class="hidden bg-white rounded-xl border border-dashed border-slate-300 p-12 text-center my-6">
+      <p class="text-slate-500 text-sm mb-3" id="lblEmptyState">Không tìm thấy đơn tuyển phù hợp với bộ lọc hiện tại.</p>
+      <button onclick="resetFilters()" class="px-4 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700">
+        Đặt lại bộ lọc
+      </button>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-slate-200 mt-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+      <span class="font-semibold text-slate-700">MINAMI KYUJIN SHARE</span>
+      <span id="footerNote">Hệ thống quản lý & chia sẻ đơn tuyển dụng Tokutei Gino / Kỹ sư Nhật Bản</span>
+    </div>
+  </footer>
+
+  <!-- MODAL 1: ADD / EDIT JOB (UPDATE) -->
+  <div id="jobModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+        <div>
+          <h2 id="jobModalTitle" class="text-base font-bold">Thêm / Cập nhật đơn tuyển (UPDATE)</h2>
+          <p class="text-xs text-slate-300">Hỗ trợ nhập nhiều dòng (Enter tự giãn ô) và dịch nhanh song ngữ Việt – Nhật</p>
+        </div>
+        <button onclick="closeModal('jobModal')" class="text-slate-300 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-5 flex-1">
+        <input type="hidden" id="editInternalId" />
+
+        <!-- Row 1: Job ID, Industry (Ngành nghề - Hạng mục 3 & 3.1), Company (Nội bộ), Status -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Mã đơn ID / 求人ID *</label>
+            <input id="fJobId" type="text" placeholder="VD: K063, LF-194..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Ngành nghề (VI) / 職種 *</label>
+            <input id="fIndustryVi" type="text" placeholder="VD: Chế biến thực phẩm, Kaigo..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Ngành nghề (JP) / 職種名</label>
+            <input id="fIndustryJp" type="text" placeholder="例：飲食料品製造、介護..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Trạng thái / 募集状況</label>
+            <select id="fStatus" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+              <option value="Đang tuyển">Đang tuyển / 募集中</option>
+              <option value="Đóng đơn">Đóng đơn / 募集終了</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: Company (Internal tracking - hidden on public card per Item 3), Location, Housing, Gender, Quantity -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Công ty / Đối tác (Nội bộ)</label>
+            <input id="fCompany" type="text" placeholder="VD: LIFT, CROSLAN..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Địa điểm (Tỉnh) / 勤務地 *</label>
+            <input id="fLocation" type="text" placeholder="VD: Gifu, Tokyo, Osaka..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nhà ở / 住居</label>
+            <select id="fHousing" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+              <option value="YES">Có hỗ trợ nhà ở / 住居あり</option>
+              <option value="NO">Không có hỗ trợ nhà ở / 住居なし</option>
+              <option value="UNKNOWN">Chưa có thông tin / 記載なし</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Giới tính / 性別</label>
+            <select id="fGender" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+              <option value="BOTH">Nam/nữ / 男女</option>
+              <option value="MALE">Nam / 男性</option>
+              <option value="FEMALE">Nữ / 女性</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Số lượng / 募集人数</label>
+            <input id="fQuantity" type="text" placeholder="VD: 5 người / 5名" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+          </div>
+        </div>
+
+        <!-- Row 3: Nationality with Quick Flag Chips (Hạng mục 2) -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <label class="block text-xs font-bold text-slate-700">Quốc tịch / 国籍 (Chọn nhanh quốc kỳ hoặc nhập tự do, để trống = Chưa có thông tin)</label>
+            <button type="button" onclick="clearNationalitySelection()" class="text-[11px] text-slate-500 hover:text-slate-800 underline">Xóa chọn</button>
+          </div>
+          <div id="nationalityFlagPicker" class="flex flex-wrap gap-1.5">
+            <!-- Rendered by JS from COUNTRY_FLAGS -->
+          </div>
+          <input id="fNationality" type="text" placeholder="VD: VN, ID, MM hoặc Việt Nam, Indonesia, Myanmar" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+        </div>
+
+        <!-- Quick Translate Buttons -->
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs font-semibold text-indigo-900">🔄 Đồng bộ dịch tự động các ô bên dưới:</span>
+          <div class="flex gap-2">
+            <button type="button" onclick="translateFormFields('vi_to_jp')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition">
+              Dịch Việt → Nhật
+            </button>
+            <button type="button" onclick="translateFormFields('jp_to_vi')" class="px-3 py-1.5 rounded-lg bg-white border border-indigo-300 hover:bg-indigo-100 text-indigo-800 text-xs font-semibold transition">
+              Dịch Nhật → Việt
+            </button>
+          </div>
+        </div>
+
+        <!-- Bilingual Fields Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nội dung công việc (Tiếng Việt)</label>
+            <textarea id="fWorkVi" rows="2" class="auto-textarea w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="VD: Chế biến thực phẩm, đóng gói cơm hộp..."></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">仕事内容 (日本語)</label>
+            <textarea id="fWorkJp" rows="2" class="auto-textarea w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="例：食品加工、弁当の盛り付け・梱包作業..."></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Lương tháng (Tiếng Việt)</label>
+            <textarea id="fSalaryVi" rows="2" class="auto-textarea w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="VD: Lương cơ bản 210,000 yên (Thực lĩnh ~175,000 yên)"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">月給 (日本語)</label>
+            <textarea id="fSalaryJp" rows="2" class="auto-textarea w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="例：基本給 210,000円（手取り約175,000円）"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Thưởng / Tăng lương (Tiếng Việt)</label>
+            <textarea id="fBonusVi" rows="2" class="auto-textarea w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="VD: Thưởng 2 lần/năm, tăng lương 1 lần/năm"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">賞与 / 昇給 (日本語)</label>
+            <textarea id="fBonusJp" rows="2" class="auto-textarea w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="例：賞与年2回、昇給年1回"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Thời gian làm việc (Tiếng Việt)</label>
+            <textarea id="fWorkTimeVi" rows="2" class="auto-textarea w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="VD: 08:00 ~ 17:00 (Nghỉ giải lao 60 phút)"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">勤務時間 (日本語)</label>
+            <textarea id="fWorkTimeJp" rows="2" class="auto-textarea w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="例：08:00〜17:00（休憩60分）"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Ngày nghỉ / Số lượng ngày nghỉ (Tiếng Việt)</label>
+            <textarea id="fHolidayVi" rows="2" class="auto-textarea w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="VD: Nghỉ theo lịch công ty (110 ngày/năm)"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">休日・年間休日数 (日本語)</label>
+            <textarea id="fHolidayJp" rows="2" class="auto-textarea w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="例：シフト制・会社カレンダーによる（年間休日110日）"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Yêu cầu tiếng Nhật (Tiếng Việt)</label>
+            <textarea id="fJpReqVi" rows="2" class="auto-textarea w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="VD: Trình độ N4 trở lên, giao tiếp cơ bản"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">日本語要件 (日本語)</label>
+            <textarea id="fJpReqJp" rows="2" class="auto-textarea w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="例：日本語N4相当以上、日常会話可能な方"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Yêu cầu kinh nghiệm (Tiếng Việt)</label>
+            <textarea id="fExpReqVi" rows="2" class="auto-textarea w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="VD: Không yêu cầu kinh nghiệm, ưu tiên có chứng chỉ Tokutei"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">経験要件 (日本語)</label>
+            <textarea id="fExpReqJp" rows="2" class="auto-textarea w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="例：未経験歓迎、特定技能試験合格者優遇"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3">
+        <button type="button" onclick="closeModal('jobModal')" class="px-4 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold">
+          Hủy
+        </button>
+        <button type="button" onclick="saveJobFromModal()" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm">
+          Lưu đơn tuyển
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: AI BATCH IMPORT (Hạng mục 4.3 & 6: Kéo thả đa định dạng JPG, PNG, WEBP, XLS, XLSX, CSV, PDF, DOC, DOCX, TXT + kiểm tra trước khi lưu) -->
+  <div id="aiImportModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 bg-indigo-900 text-white flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold">✨ Nhập nhanh AI hàng loạt (5–10 đơn tuyển)</h2>
+          <p class="text-xs text-indigo-200">Kéo thả nhiều file (JPG, PNG, WEBP, XLS, XLSX, CSV, PDF, DOC, DOCX, TXT) hoặc dán tin nhắn/bảng Excel</p>
+        </div>
+        <button onclick="closeModal('aiImportModal')" class="text-indigo-200 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 flex-1">
+        <!-- Optional Gemini API Key Config -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex-1 min-w-[240px]">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Gemini API Key (Dùng để đọc ảnh JPG/PNG/WEBP, PDF scan & dịch song ngữ chuẩn xác)</label>
+            <input id="aiGeminiKeyInput" type="password" placeholder="AIzaSy..." class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+          </div>
+          <div class="flex items-center gap-2 pt-4 sm:pt-0">
+            <button onclick="saveAiApiKey()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold">
+              Lưu Key
+            </button>
+            <button onclick="loadSampleBatch5Jobs()" class="px-3 py-1.5 rounded-lg border border-indigo-300 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 text-xs font-semibold">
+              Nạp thử 5 đơn mẫu
+            </button>
+          </div>
+        </div>
+
+        <!-- Drag & Drop Zone + Raw Text (Hạng mục 4.3) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div id="aiDropZone" class="border-2 border-dashed border-indigo-300 hover:border-indigo-500 rounded-xl p-4 bg-indigo-50/40 flex flex-col justify-center items-center text-center transition cursor-pointer">
+            <span class="text-2xl mb-1">📥</span>
+            <p class="text-xs font-bold text-slate-800 mb-1">Kéo thả nhiều file vào đây</p>
+            <p class="text-[11px] text-slate-500 mb-2">JPG, PNG, WEBP, XLS, XLSX, CSV, PDF, DOC, DOCX, TXT</p>
+            <p class="text-[10px] text-amber-700 mb-3">Không suy diễn dữ liệu; dữ liệu thiếu để trống</p>
+            <label class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold cursor-pointer">
+              Chọn file từ máy
+              <input id="aiBatchFiles" type="file" multiple accept=".jpg,.jpeg,.png,.webp,.xls,.xlsx,.csv,.pdf,.doc,.docx,.txt,.md,.json" onchange="handleAiFilesUpload(event)" class="hidden" />
+            </label>
+            <p id="aiFilesStatus" class="text-[11px] text-emerald-700 font-medium mt-2"></p>
+          </div>
+
+          <div class="lg:col-span-2">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Hoặc dán nội dung văn bản / tin nhắn / dữ liệu bảng đơn tuyển (ngăn cách bằng dòng <code>---</code>):</label>
+            <textarea id="aiRawInput" rows="6" class="w-full rounded-xl border border-slate-300 p-3 text-xs font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Dán nội dung đơn tuyển (tiếng Việt hoặc tiếng Nhật) tại đây..."></textarea>
+          </div>
+        </div>
+
+        <!-- Action bar inside AI Import (Hạng mục 4.3 & 6) -->
+        <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <span id="aiExtractSummary" class="text-xs font-semibold text-slate-600">Sẵn sàng nhận file hoặc văn bản đơn tuyển.</span>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="clearAiDraft()" class="px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-semibold transition">
+              Xóa nháp
+            </button>
+            <button onclick="runBatchAiExtraction()" class="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition">
+              ⚡ Xử lý dữ liệu & Kiểm tra nội dung
+            </button>
+          </div>
+        </div>
+
+        <!-- Preview Cards Container -->
+        <div id="aiPreviewList" class="space-y-4"></div>
+      </div>
+
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+        <span class="text-xs text-slate-500">* Mục chưa rõ được đánh dấu cần kiểm tra trước khi lưu.</span>
+        <div class="flex gap-3">
+          <button onclick="closeModal('aiImportModal')" class="px-4 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold">
+            Đóng
+          </button>
+          <button id="btnCommitAiJobs" onclick="commitAiExtractedJobs()" disabled class="px-5 py-2 rounded-lg bg-emerald-600 disabled:bg-slate-300 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition">
+            Lưu tất cả vào danh sách
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: COMPANY STATISTICS (Kèm công cụ Quản lý dữ liệu & Sao lưu JSON cho Admin) -->
+  <div id="statsModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold">📊 Thống kê đơn tuyển theo công ty & Quản lý dữ liệu</h2>
+          <p class="text-xs text-slate-300">Khử trùng theo Mã đơn ID, tách bạch đơn đang hoạt động, đã đóng và đã xóa mềm</p>
+        </div>
+        <button onclick="closeModal('statsModal')" class="text-slate-300 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-5 flex-1">
+        <div id="statsOverviewCards" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+
+        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                <th class="py-3 px-4 font-bold">Tên công ty / 会社名</th>
+                <th class="py-3 px-4 font-bold text-center">Tổng mã đơn</th>
+                <th class="py-3 px-4 font-bold text-center text-emerald-700">Đang tuyển</th>
+                <th class="py-3 px-4 font-bold text-center text-red-600">Đã đóng</th>
+                <th class="py-3 px-4 font-bold text-center text-slate-500">Đã xóa mềm</th>
+                <th class="py-3 px-4 font-bold text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="statsCompanyTableBody" class="divide-y divide-slate-200"></tbody>
+          </table>
+        </div>
+
+        <!-- Admin Utilities: JSON Backup & Change Admin PIN (Moved from main toolbar to keep UI clean per Item 1 & Item 4.3) -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div>
+            <p class="font-bold text-slate-800">Sao lưu & Bảo mật quản trị</p>
+            <p class="text-slate-500">Xuất/Nhập file JSON dự phòng hoặc đổi mật khẩu Admin (Mặc định: MINAMI2026)</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="exportJsonBackup()" class="px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 font-semibold">
+              💾 Xuất JSON
+            </button>
+            <label class="px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 font-semibold cursor-pointer">
+              📂 Nhập JSON
+              <input type="file" accept=".json" onchange="importJsonBackup(event)" class="hidden" />
+            </label>
+            <button onclick="changeAdminPassword()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-900 text-white font-semibold">
+              🔑 Đổi mã xác thực
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <button onclick="closeModal('statsModal')" class="px-4 py-2 rounded-lg bg-slate-800 text-white text-xs font-semibold">
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: SUPABASE CLOUD SYNC -->
+  <div id="supabaseModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 bg-sky-900 text-white flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold">☁️ Cấu hình & Đồng bộ Supabase</h2>
+          <p class="text-xs text-sky-200">Kết nối cơ sở dữ liệu đám mây để mọi người xem thời gian thực</p>
+        </div>
+        <button onclick="closeModal('supabaseModal')" class="text-sky-200 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 flex-1 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Supabase Project URL *</label>
+          <input id="sbUrlInput" type="text" placeholder="https://xxxx.supabase.co" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Supabase Anon / Publishable Key *</label>
+          <input id="sbKeyInput" type="password" placeholder="sb_publishable_... hoặc eyJhbGci..." class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Tên bảng dữ liệu (Table Name)</label>
+          <input id="sbTableInput" type="text" value="jobs" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none" />
+        </div>
+
+        <div class="space-y-2 pt-1">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input id="sbAutoPushCheck" type="checkbox" checked class="rounded text-sky-600 focus:ring-sky-500" />
+            <span class="font-medium text-slate-700">Tự động đẩy lên Supabase khi Thêm / Sửa / Xóa (Auto Push)</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input id="sbAutoPullCheck" type="checkbox" checked class="rounded text-sky-600 focus:ring-sky-500" />
+            <span class="font-medium text-slate-700">Tự động tải dữ liệu mới nhất từ Supabase khi mở trang (Auto Pull)</span>
+          </label>
+        </div>
+
+        <div id="sbDiagnosticBox" class="rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-700">Trạng thái kiểm tra kết nối:</span>
+            <button type="button" onclick="testSupabaseConnection()" class="px-3 py-1 rounded bg-sky-600 hover:bg-sky-700 text-white font-semibold">
+              🔍 Kiểm tra kết nối & Bảng
+            </button>
+          </div>
+          <p id="sbDiagnosticMsg" class="text-slate-600">Nhấn "Kiểm tra kết nối & Bảng" để xác minh URL, Key và quyền đọc/ghi RLS.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 pt-2">
+          <button type="button" onclick="saveSupabaseConfig()" class="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold">
+            💾 Lưu cấu hình
+          </button>
+          <button type="button" onclick="pushAllToSupabase(false)" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
+            ↑ Đẩy tất cả lên Supabase (Push)
+          </button>
+          <button type="button" onclick="pullFromSupabase(false)" class="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-semibold">
+            ↓ Tải từ Supabase (Pull)
+          </button>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <button onclick="closeModal('supabaseModal')" class="px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-xs font-semibold">
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 5: COPY POST PREVIEW (FACEBOOK / ZALO - Hạng mục 7.1) -->
+  <div id="copyPostModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full flex flex-col overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 bg-emerald-900 text-white flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold">📋 Mẫu tin gửi ứng viên / Facebook / Zalo</h2>
+          <p class="text-xs text-emerald-200">Tự động định dạng chuẩn, có thể chọn ngôn ngữ hoặc chỉnh sửa trước khi sao chép</p>
+        </div>
+        <button onclick="closeModal('copyPostModal')" class="text-emerald-200 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+
+      <div class="p-5 space-y-3">
+        <div class="flex items-center justify-between gap-2 text-xs">
+          <span class="font-semibold text-slate-600">Chế độ ngôn ngữ bài đăng:</span>
+          <div class="inline-flex rounded-lg border border-slate-300 bg-slate-100 p-0.5">
+            <button type="button" id="btnPostLangVi" onclick="switchCopyPostLang('vi')" class="px-2.5 py-1 rounded-md font-semibold bg-emerald-600 text-white">Tiếng Việt</button>
+            <button type="button" id="btnPostLangJp" onclick="switchCopyPostLang('jp')" class="px-2.5 py-1 rounded-md font-semibold text-slate-700">日本語</button>
+            <button type="button" id="btnPostLangBi" onclick="switchCopyPostLang('bi')" class="px-2.5 py-1 rounded-md font-semibold text-slate-700">Song ngữ</button>
+          </div>
+        </div>
+
+        <textarea id="copyPostTextarea" rows="14" class="w-full rounded-xl border border-slate-300 p-3.5 text-xs leading-relaxed bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+      </div>
+
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2">
+        <button onclick="closeModal('copyPostModal')" class="px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-xs font-semibold">
+          Đóng
+        </button>
+        <button onclick="copyGeneratedPostText()" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm">
+          📋 Sao chép nội dung
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 6: JOB DETAIL MODAL (Hạng mục 7.1: Nút "Chi tiết đơn" hoạt động thực tế) -->
+  <div id="jobDetailModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+        <div>
+          <h2 id="detailModalTitle" class="text-base font-bold">Chi tiết đơn tuyển dụng</h2>
+          <p id="detailModalSub" class="text-xs text-slate-300">Thông tin đầy đủ song ngữ Việt – Nhật</p>
+        </div>
+        <button onclick="closeModal('jobDetailModal')" class="text-slate-300 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+
+      <div id="detailModalBody" class="p-6 overflow-y-auto space-y-4 flex-1 text-sm">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex gap-2">
+          <button id="btnDetailCopy" type="button" class="px-3.5 py-2 rounded-lg bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold">
+            Copy tin gửi
+          </button>
+          <button id="btnDetailSnap" type="button" class="px-3.5 py-2 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-semibold">
+            Chụp ảnh đơn tuyển
+          </button>
+        </div>
+        <button onclick="closeModal('jobDetailModal')" class="px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-xs font-semibold">
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastBox" class="fixed bottom-5 right-5 z-50 hidden max-w-sm bg-slate-900 text-white text-xs font-medium px-4 py-3 rounded-xl shadow-lg border border-slate-700"></div>
+
+  <script>
+    const STORAGE_KEY = 'minami_kyujin_share_jobs_v3';
+    const SB_CONFIG_KEY = 'minami_kyujin_supabase_cfg_v2';
+    const AI_KEY_STORAGE = 'minami_kyujin_gemini_key_v1';
+    const ADMIN_PASS_KEY = 'minami_kyujin_admin_pass_v1';
+    const ADMIN_SESSION_KEY = 'minami_kyujin_admin_logged_v1';
+
+    // Default Supabase configuration so public visitors auto-load live jobs immediately
+    const DEFAULT_SB_CONFIG = {
+      url: 'https://mtyemmuuzqzvnfiraemq.supabase.co',
+      key: 'sb_publishable_UQ608RbwTIk-Pe8BqhDdQA_HxWSMlys',
+      table: 'jobs',
+      autoPush: true,
+      autoPull: true
+    };
+
+    // Hạng mục 2: Danh sách quốc gia và biểu tượng quốc kỳ + mã quốc gia
+    const COUNTRY_FLAGS = [
+      { code: 'VN', flag: '🇻🇳', vi: 'Việt Nam', jp: 'ベトナム', aliases: ['vn', 'viet nam', 'việt nam', 'vietnam', 'ベトナム'] },
+      { code: 'ID', flag: '🇮🇩', vi: 'Indonesia', jp: 'インドネシア', aliases: ['id', 'ind', 'indonesia', 'インドネシア'] },
+      { code: 'MM', flag: '🇲🇲', vi: 'Myanmar', jp: 'ミャンマー', aliases: ['mm', 'myanmar', 'myanma', 'ミャンマー'] },
+      { code: 'TH', flag: '🇹🇭', vi: 'Thái Lan', jp: 'タイ', aliases: ['th', 'thai', 'thái', 'thái lan', 'thailand', 'タイ'] },
+      { code: 'KH', flag: '🇰🇭', vi: 'Campuchia', jp: 'カンボジア', aliases: ['kh', 'cam', 'campuchia', 'cambodia', 'カンボジア'] },
+      { code: 'NP', flag: '🇳🇵', vi: 'Nepal', jp: 'ネパール', aliases: ['np', 'nepal', 'ネパール'] },
+      { code: 'CN', flag: '🇨🇳', vi: 'Trung Quốc', jp: '中国', aliases: ['cn', 'trung quốc', 'trung quoc', 'china', '中国'] },
+      { code: 'LK', flag: '🇱🇰', vi: 'Sri Lanka', jp: 'スリランカ', aliases: ['lk', 'sri lanka', 'srilanka', 'スリランカ'] },
+      { code: 'BD', flag: '🇧🇩', vi: 'Bangladesh', jp: 'バングラデシュ', aliases: ['bd', 'bangladesh', 'バングラデシュ'] }
+    ];
+
+    let currentLang = 'vi';
+    let isAdmin = false;
+    let jobsList = [];
+    let aiPreviewBatch = [];
+    let batchUploadedFiles = [];
+    let activeCopyJobId = null;
+
+    const DEFAULT_JOBS = [
+      {
+        internalId: 'job_init_1',
+        company: 'LIFT',
+        jobId: 'LF-194',
+        industryVi: 'Chế biến thực phẩm',
+        industryJp: '飲食料品製造',
+        location: 'Tokyo',
+        status: 'Đang tuyển',
+        quantity: '5 người',
+        workVi: 'Chế biến và đóng gói thực phẩm siêu thị, cơm hộp Bento',
+        workJp: 'スーパー向け惣菜・弁当の調理および盛付・梱包作業',
+        salaryVi: '220,000 yên/tháng (Chưa tính tăng ca)',
+        salaryJp: '月給 220,000円（残業代別途支給）',
+        bonusVi: 'Thưởng 2 lần/năm, xét tăng lương 1 lần/năm',
+        bonusJp: '賞与年2回、昇給年1回',
+        housing: 'YES',
+        nationality: 'VN, ID, MM',
+        gender: 'BOTH',
+        workTimeVi: '08:00 ~ 17:00 (Nghỉ giải lao 60 phút)',
+        workTimeJp: '08:00〜17:00（休憩60分）',
+        holidayVi: 'Nghỉ theo ca (110 ngày/năm)',
+        holidayJp: 'シフト制（年間休日110日）',
+        jpReqVi: 'Trình độ tương đương N4 trở lên, giao tiếp tốt',
+        jpReqJp: '日本語N4相当以上、日常会話可能な方',
+        expReqVi: 'Không yêu cầu kinh nghiệm, ưu tiên có chứng chỉ Tokutei Thực phẩm',
+        expReqJp: '未経験歓迎、特定技能（飲食料品製造業）合格者優遇',
+        deleted: false,
+        deletedAt: null,
+        updatedAt: new Date().toISOString()
+      },
+      {
+        internalId: 'job_init_2',
+        company: 'CROSLAN',
+        jobId: 'CR-217',
+        industryVi: 'Điều dưỡng (Kaigo)',
+        industryJp: '介護',
+        location: 'Osaka',
+        status: 'Đang tuyển',
+        quantity: '3 người',
+        workVi: 'Chăm sóc người cao tuổi tại viện dưỡng lão (Kaigo)',
+        workJp: '特別養護老人ホームにおける介護業務全般',
+        salaryVi: '235,000 ~ 255,000 yên/tháng (Đã bao gồm phụ cấp trực đêm)',
+        salaryJp: '月給 235,000円〜255,000円（夜勤手当含む）',
+        bonusVi: 'Thưởng 2 lần/năm (tương đương 2.5 tháng lương)',
+        bonusJp: '賞与年2回（計2.5ヶ月分）',
+        housing: 'YES',
+        nationality: 'VN',
+        gender: 'FEMALE',
+        workTimeVi: 'Làm theo ca (Ca ngày 07:00~16:00 / Ca đêm 16:30~09:30)',
+        workTimeJp: 'シフト制（日勤 07:00〜16:00 / 夜勤 16:30〜09:30）',
+        holidayVi: '9 ngày nghỉ/tháng (112 ngày/năm)',
+        holidayJp: '月9日休み（年間休日112日）',
+        jpReqVi: 'Chứng chỉ N4 hoặc JFT-Basic A2 trở lên',
+        jpReqJp: '日本語能力試験N4またはJFT-Basic A2以上',
+        expReqVi: 'Đã đỗ kỳ thi kỹ năng đặc định Kaigo',
+        expReqJp: '介護技能評価試験・介護日本語評価試験合格者',
+        deleted: false,
+        deletedAt: null,
+        updatedAt: new Date().toISOString()
+      },
+      {
+        internalId: 'job_init_3',
+        company: 'MINAMI',
+        jobId: 'K063',
+        industryVi: 'Chế biến thực phẩm',
+        industryJp: '飲食料品製造',
+        location: 'Gifu',
+        status: 'Đang tuyển',
+        quantity: '4 người',
+        workVi: 'Chế biến thịt, đóng khay và kiểm tra chất lượng sản phẩm',
+        workJp: '食肉加工・パック詰め・検品作業',
+        salaryVi: '215,000 yên/tháng (Chưa tính tăng ca)',
+        salaryJp: '月給 215,000円（残業代別途）',
+        bonusVi: 'Thưởng 2 lần/năm, tăng lương 1 lần/năm',
+        bonusJp: '賞与年2回、昇給年1回',
+        housing: 'YES',
+        nationality: 'VN, ID, MM, NP',
+        gender: 'BOTH',
+        workTimeVi: '08:30 ~ 17:30 (Nghỉ trưa 60 phút)',
+        workTimeJp: '08:30〜17:30（休憩60分）',
+        holidayVi: 'Nghỉ theo lịch công ty (112 ngày/năm)',
+        holidayJp: '会社カレンダーによる（年間休日112日）',
+        jpReqVi: 'Giao tiếp cơ bản N4 trở lên',
+        jpReqJp: '日本語N4レベル以上',
+        expReqVi: 'Không yêu cầu kinh nghiệm, ưu tiên có bằng Tokutei Thực phẩm',
+        expReqJp: '未経験歓迎、飲食料品製造業合格者優遇',
+        deleted: false,
+        deletedAt: null,
+        updatedAt: new Date().toISOString()
+      }
+    ];
+
+    const DICT_VI_JP = [
+      ['Chế biến thực phẩm', '飲食料品製造・食品加工'],
+      ['Điều dưỡng (Kaigo)', '介護'],
+      ['Điều dưỡng', '介護'],
+      ['Nhà hàng', '外食業'],
+      ['Khách sạn', '宿泊業'],
+      ['Xây dựng', '建設業'],
+      ['Cơ khí', '素形材・産業機械・電気電子情報関連製造業'],
+      ['Nông nghiệp', '農業'],
+      ['Vệ sinh tòa nhà', 'ビルクリーニング'],
+      ['đóng gói', '梱包作業'],
+      ['cơm hộp', '弁当製造'],
+      ['Chăm sóc người cao tuổi', '介護業務'],
+      ['viện dưỡng lão', '介護施設'],
+      ['Không yêu cầu kinh nghiệm', '未経験歓迎'],
+      ['Không yêu cầu quốc tịch', '国籍不問'],
+      ['Thưởng 2 lần/năm', '賞与年2回'],
+      ['Tăng lương 1 lần/năm', '昇給年1回'],
+      ['Có hỗ trợ nhà ở', '住居あり'],
+      ['Không có hỗ trợ nhà ở', '住居なし'],
+      ['Nghỉ theo ca', 'シフト制'],
+      ['Thứ 7, Chủ nhật', '土日休み'],
+      ['Trình độ N4 trở lên', '日本語N4以上'],
+      ['Trình độ N3 trở lên', '日本語N3以上']
+    ];
+
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      box.textContent = msg;
+      box.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        box.classList.add('hidden');
+      }, 3600);
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatMultilineHtml(text) {
+      return escapeHtml(text || '').replace(/?
+/g, '<br>');
+    }
+
+    function autoResizeTextarea(el) {
+      if (!el) return;
+      el.style.height = 'auto';
+      el.style.height = Math.max(40, el.scrollHeight) + 'px';
+    }
+
+    function bindAutoResizeAll() {
+      document.querySelectorAll('.auto-textarea').forEach(el => {
+        autoResizeTextarea(el);
+        if (!el.dataset.boundResize) {
+          el.addEventListener('input', () => autoResizeTextarea(el));
+          el.dataset.boundResize = '1';
+        }
+      });
+    }
+
+    /* ================= ADMIN AUTH (Hạng mục 4.2 & 4.3 & 5) ================= */
+    function getAdminPassword() {
+      return localStorage.getItem(ADMIN_PASS_KEY) || 'MINAMI2026';
+    }
+
+    function syncAdminUI() {
+      const tools = document.getElementById('adminHeaderTools');
+      const btnToggle = document.getElementById('btnAdminToggle');
+      const lblToggle = document.getElementById('lblAdminToggle');
+      const iconLock = document.getElementById('iconAdminLock');
+      const compFilterWrap = document.getElementById('filterCompanyWrapper');
+      const optDeleted = document.getElementById('optFilterDeleted');
+
+      if (isAdmin) {
+        tools.classList.remove('hidden');
+        tools.classList.add('flex');
+        compFilterWrap.classList.remove('hidden');
+        optDeleted.classList.remove('hidden');
+        btnToggle.className = 'inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-100 border border-amber-300 hover:bg-amber-200 text-amber-900 text-xs font-semibold shadow-sm transition';
+        iconLock.textContent = '🔓';
+        lblToggle.textContent = currentLang === 'jp' ? '管理者ログアウト' : 'Thoát Admin';
+      } else {
+        tools.classList.add('hidden');
+        tools.classList.remove('flex');
+        compFilterWrap.classList.add('hidden');
+        optDeleted.classList.add('hidden');
+        if (document.getElementById('filterStatus').value === 'DELETED') {
+          document.getElementById('filterStatus').value = 'ACTIVE_ALL';
+        }
+        btnToggle.className = 'inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-800 text-xs font-semibold shadow-sm transition';
+        iconLock.textContent = '🔒';
+        lblToggle.textContent = currentLang === 'jp' ? '管理者ログイン' : 'Đăng nhập Admin';
+      }
+      renderJobs();
+    }
+
+    function handleAdminAuthClick() {
+      if (isAdmin) {
+        isAdmin = false;
+        sessionStorage.removeItem(ADMIN_SESSION_KEY);
+        syncAdminUI();
+        showToast(currentLang === 'jp' ? '管理者モードを終了しました。' : 'Đã thoát chế độ Admin.');
+        return;
+      }
+      const promptMsg = currentLang === 'jp'
+        ? '管理者パスワードを入力してください：'
+        : 'Nhập mã xác thực Admin để quản lý đơn tuyển:';
+      const input = prompt(promptMsg);
+      if (input === null) return;
+      if (input.trim() === getAdminPassword()) {
+        isAdmin = true;
+        sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
+        syncAdminUI();
+        showToast(currentLang === 'jp' ? '管理者としてログインしました。' : 'Đăng nhập Admin thành công!');
+      } else {
+        alert(currentLang === 'jp' ? 'パスワードが正しくありません。' : 'Mã xác thực Admin không chính xác!');
+      }
+    }
+
+    function changeAdminPassword() {
+      if (!isAdmin) return;
+      const newPass = prompt('Nhập mã xác thực Admin mới (tối thiểu 4 ký tự):');
+      if (!newPass) return;
+      if (newPass.trim().length < 4) {
+        alert('Mã xác thực phải có ít nhất 4 ký tự.');
+        return;
+      }
+      localStorage.setItem(ADMIN_PASS_KEY, newPass.trim());
+      showToast('Đã cập nhật mã xác thực Admin mới!');
+    }
+
+    /* ================= NATIONALITY FLAG RENDERER (Hạng mục 2) ================= */
+    function parseCountriesFromRaw(rawNat) {
+      const val = String(rawNat || '').trim();
+      if (!val) return { matched: [], remainder: '' };
+
+      // Check if "Không yêu cầu"
+      if (/không yêu cầu|国籍不問|không giới hạn|tất cả/i.test(val)) {
+        return { matched: [], remainder: val, isAny: true };
+      }
+
+      const tokens = val.split(/[,;/、・
+]+/).map(t => t.trim()).filter(Boolean);
+      const matched = [];
+      const unmatched = [];
+
+      tokens.forEach(tok => {
+        const lower = tok.toLowerCase();
+        const found = COUNTRY_FLAGS.find(c =>
+          c.code.toLowerCase() === lower ||
+          c.vi.toLowerCase() === lower ||
+          c.jp.toLowerCase() === lower ||
+          c.aliases.includes(lower)
+        );
+        if (found) {
+          if (!matched.some(m => m.code === found.code)) matched.push(found);
+        } else {
+          unmatched.push(tok);
+        }
+      });
+
+      return { matched, remainder: unmatched.join(', '), isAny: false };
+    }
+
+    function formatNationalityHtml(rawNat, lang) {
+      const val = String(rawNat || '').trim();
+      if (!val) return lang === 'jp' ? '記載なし' : 'Chưa có thông tin';
+
+      const { matched, remainder, isAny } = parseCountriesFromRaw(val);
+      if (isAny) {
+        return lang === 'jp' ? '国籍不問' : 'Không yêu cầu quốc tịch';
+      }
+
+      if (matched.length > 0) {
+        const badges = matched.map(c =>
+          `<span class="flag-badge" title="${escapeHtml(lang === 'jp' ? c.jp : c.vi)}"><span>${c.flag}</span><span>${c.code}</span></span>`
+        ).join(' ');
+        return remainder ? `<div class="flex flex-wrap items-center gap-1">${badges}<span class="text-xs text-slate-600 ml-1">${escapeHtml(remainder)}</span></div>` : `<div class="flex flex-wrap items-center gap-1">${badges}</div>`;
+      }
+
+      return escapeHtml(val);
+    }
+
+    function formatNationalityPlain(rawNat, lang) {
+      const val = String(rawNat || '').trim();
+      if (!val) return lang === 'jp' ? '記載なし' : 'Chưa có thông tin';
+      const { matched, remainder, isAny } = parseCountriesFromRaw(val);
+      if (isAny) return lang === 'jp' ? '国籍不問' : 'Không yêu cầu quốc tịch';
+      if (matched.length > 0) {
+        const str = matched.map(c => `${c.flag} ${c.code}`).join(', ');
+        return remainder ? `${str}, ${remainder}` : str;
+      }
+      return val;
+    }
+
+    function renderNationalityPicker() {
+      const picker = document.getElementById('nationalityFlagPicker');
+      if (!picker) return;
+      const currentVal = (document.getElementById('fNationality').value || '');
+      const { matched } = parseCountriesFromRaw(currentVal);
+      const selectedCodes = new Set(matched.map(m => m.code));
+
+      picker.innerHTML = COUNTRY_FLAGS.map(c => {
+        const active = selectedCodes.has(c.code) ? 'selected' : '';
+        return `<button type="button" onclick="toggleNationalityCode('${c.code}')" class="flag-chip-btn ${active}">
+          <span>${c.flag}</span><span>${c.code}</span><span class="text-[11px] text-slate-500">(${c.vi})</span>
+        </button>`;
+      }).join('');
+    }
+
+    function toggleNationalityCode(code) {
+      const input = document.getElementById('fNationality');
+      const { matched, remainder } = parseCountriesFromRaw(input.value);
+      const exists = matched.some(m => m.code === code);
+      let nextCodes = matched.map(m => m.code);
+      if (exists) {
+        nextCodes = nextCodes.filter(c => c !== code);
+      } else {
+        nextCodes.push(code);
+      }
+      const parts = [...nextCodes];
+      if (remainder) parts.push(remainder);
+      input.value = parts.join(', ');
+      renderNationalityPicker();
+    }
+
+    function clearNationalitySelection() {
+      document.getElementById('fNationality').value = '';
+      renderNationalityPicker();
+    }
+
+    /* ================= FORMATTERS ================= */
+    function formatHousing(code, lang) {
+      if (code === 'YES') return lang === 'jp' ? '住居あり' : 'Có hỗ trợ nhà ở';
+      if (code === 'NO') return lang === 'jp' ? '住居なし' : 'Không có hỗ trợ nhà ở';
+      return lang === 'jp' ? '記載なし' : 'Chưa có thông tin';
+    }
+
+    function formatGender(code, lang) {
+      if (code === 'MALE') return lang === 'jp' ? '男性' : 'Nam';
+      if (code === 'FEMALE') return lang === 'jp' ? '女性' : 'Nữ';
+      return lang === 'jp' ? '男女' : 'Nam/nữ';
+    }
+
+    function formatQuantity(rawQty, lang) {
+      const val = String(rawQty || '').trim();
+      if (!val) return lang === 'jp' ? '記載なし' : 'Chưa có thông tin';
+      return escapeHtml(val);
+    }
+
+    /* ================= STORAGE & FILTERS ================= */
+    function loadJobsFromStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            jobsList = parsed;
+            return;
+          }
+        }
+      } catch (e) {
+        console.error('Error loading localStorage:', e);
+      }
+      jobsList = JSON.parse(JSON.stringify(DEFAULT_JOBS));
+      saveJobsToStorage(false);
+    }
+
+    function saveJobsToStorage(triggerAutoPush = true) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(jobsList));
+      updateFilterOptions();
+      if (triggerAutoPush) {
+        const cfg = getSupabaseConfig();
+        if (cfg.url && cfg.key && cfg.autoPush) {
+          pushAllToSupabase(true);
+        }
+      }
+    }
+
+    function inferIndustryFromJob(job) {
+      if (currentLang === 'jp' && job.industryJp) return job.industryJp.trim();
+      if (job.industryVi) return job.industryVi.trim();
+      if (job.industryJp) return job.industryJp.trim();
+
+      const text = `${job.workVi || ''} ${job.workJp || ''}`.toLowerCase();
+      if (/thực phẩm|cơm hộp|bento|thịt|bánh|thủy sản|食品|弁当/.test(text)) {
+        return currentLang === 'jp' ? '飲食料品製造' : 'Chế biến thực phẩm';
+      }
+      if (/kaigo|điều dưỡng|chăm sóc người cao tuổi|viện dưỡng lão|介護/.test(text)) {
+        return currentLang === 'jp' ? '介護' : 'Điều dưỡng (Kaigo)';
+      }
+      if (/nhà hàng|bếp|phục vụ|izakaya|ramen|yakiniku|外食/.test(text)) {
+        return currentLang === 'jp' ? '外食業' : 'Nhà hàng';
+      }
+      if (/khách sạn|buồng phòng|lễ tân|宿泊/.test(text)) {
+        return currentLang === 'jp' ? '宿泊業' : 'Khách sạn';
+      }
+      if (/cơ khí|tiện|cnc|hàn|kim loại|機械|溶接/.test(text)) {
+        return currentLang === 'jp' ? '製造・機械加工' : 'Cơ khí / Chế tạo';
+      }
+      if (/xây dựng|cốt pha|giàn giáo|建設/.test(text)) {
+        return currentLang === 'jp' ? '建設業' : 'Xây dựng';
+      }
+      if (/nông nghiệp|trồng trọt|chăn nuôi|農業/.test(text)) {
+        return currentLang === 'jp' ? '農業' : 'Nông nghiệp';
+      }
+      if (/vệ sinh|tòa nhà|ビルクリーニング/.test(text)) {
+        return currentLang === 'jp' ? 'ビルクリーニング' : 'Vệ sinh tòa nhà';
+      }
+      return currentLang === 'jp' ? '特定技能・その他' : 'Tokutei / Ngành khác';
+    }
+
+    function updateFilterOptions() {
+      // Industry options
+      const indSel = document.getElementById('filterIndustry');
+      const prevInd = indSel.value;
+      const industries = Array.from(new Set(
+        jobsList.filter(j => !j.deleted).map(j => inferIndustryFromJob(j)).filter(Boolean)
+      )).sort();
+      indSel.innerHTML = `<option value="">${currentLang === 'jp' ? 'すべての職種' : 'Tất cả ngành nghề'}</option>`;
+      industries.forEach(ind => {
+        const opt = document.createElement('option');
+        opt.value = ind;
+        opt.textContent = ind;
+        indSel.appendChild(opt);
+      });
+      if (industries.includes(prevInd)) indSel.value = prevInd;
+
+      // Company options
+      const compSel = document.getElementById('filterCompany');
+      const prevComp = compSel.value;
+      const companies = Array.from(new Set(jobsList.map(j => (j.company || '').trim()).filter(Boolean))).sort();
+      compSel.innerHTML = `<option value="">${currentLang === 'jp' ? 'すべての企業' : 'Tất cả công ty'}</option>`;
+      companies.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        compSel.appendChild(opt);
+      });
+      if (companies.includes(prevComp)) compSel.value = prevComp;
+    }
+
+    function resetFilters() {
+      document.getElementById('filterSearch').value = '';
+      document.getElementById('filterIndustry').value = '';
+      document.getElementById('filterCompany').value = '';
+      document.getElementById('filterStatus').value = 'ACTIVE_ALL';
+      document.getElementById('filterExtra').value = '';
+      renderJobs();
+    }
+
+    /* ================= BILINGUAL SYNC (Hạng mục 7) ================= */
+    function setLanguage(lang) {
+      currentLang = lang;
+      const btnVi = document.getElementById('btnLangVi');
+      const btnJp = document.getElementById('btnLangJp');
+
+      if (lang === 'vi') {
+        btnVi.className = 'px-3 py-1.5 text-xs font-semibold rounded-md bg-emerald-600 text-white shadow-sm transition';
+        btnJp.className = 'px-3 py-1.5 text-xs font-semibold rounded-md text-slate-700 hover:text-slate-900 transition';
+        document.getElementById('pageSubtitleDesc').textContent = 'Hệ thống chia sẻ thông tin đơn tuyển dụng Nhật Bản song ngữ Việt – Nhật';
+        document.getElementById('lblBtnAiImport').textContent = 'Nhập nhanh AI (5–10 đơn)';
+        document.getElementById('lblBtnAddJob').textContent = 'Thêm đơn mới';
+        document.getElementById('lblBtnStats').textContent = 'Thống kê công ty';
+        document.getElementById('lblBtnSupabase').textContent = 'Đồng bộ Supabase';
+        document.getElementById('lblFilterSearch').textContent = 'Tìm kiếm (Mã đơn ID, ngành nghề, công việc, tỉnh)';
+        document.getElementById('lblFilterIndustry').textContent = 'Ngành nghề / 職種';
+        document.getElementById('lblFilterCompany').textContent = 'Công ty tiếp nhận';
+        document.getElementById('lblFilterStatus').textContent = 'Trạng thái tuyển';
+        document.getElementById('lblFilterHousing').textContent = 'Nhà ở & Giới tính';
+        document.getElementById('lblResetFilter').textContent = 'Đặt lại bộ lọc';
+        document.getElementById('lblEmptyState').textContent = 'Không tìm thấy đơn tuyển phù hợp với bộ lọc hiện tại.';
+        document.getElementById('footerNote').textContent = 'Hệ thống quản lý & chia sẻ đơn tuyển dụng Tokutei Gino / Kỹ sư Nhật Bản';
+      } else {
+        btnJp.className = 'px-3 py-1.5 text-xs font-semibold rounded-md bg-emerald-600 text-white shadow-sm transition';
+        btnVi.className = 'px-3 py-1.5 text-xs font-semibold rounded-md text-slate-700 hover:text-slate-900 transition';
+        document.getElementById('pageSubtitleDesc').textContent = 'MINAMI KYUJIN SHARE — 日越バイリンガル求人情報共有システム';
+        document.getElementById('lblBtnAiImport').textContent = 'AI一括取込 (5〜10件)';
+        document.getElementById('lblBtnAddJob').textContent = '新規求人追加';
+        document.getElementById('lblBtnStats').textContent = '企業別集計';
+        document.getElementById('lblBtnSupabase').textContent = 'Supabase同期';
+        document.getElementById('lblFilterSearch').textContent = '検索（求人ID・職種・仕事内容・勤務地）';
+        document.getElementById('lblFilterIndustry').textContent = '職種・業種';
+        document.getElementById('lblFilterCompany').textContent = '受入企業';
+        document.getElementById('lblFilterStatus').textContent = '募集状況';
+        document.getElementById('lblFilterHousing').textContent = '住居・性別';
+        document.getElementById('lblResetFilter').textContent = 'リセット';
+        document.getElementById('lblEmptyState').textContent = '条件に一致する求人が見つかりませんでした。';
+        document.getElementById('footerNote').textContent = '特定技能・技術人文国際業務 求人情報管理共有システム';
+      }
+      updateFilterOptions();
+      syncAdminUI();
+    }
+
+    /* ================= RENDER JOB CARDS (Hạng mục 2, 3, 3.1, 5, 7.1) ================= */
+    function renderJobs() {
+      const q = (document.getElementById('filterSearch').value || '').toLowerCase().trim();
+      const fInd = document.getElementById('filterIndustry').value;
+      const fComp = document.getElementById('filterCompany').value;
+      const fStat = document.getElementById('filterStatus').value;
+      const fExtra = document.getElementById('filterExtra').value;
+
+      const filtered = jobsList.filter(job => {
+        if (fStat === 'DELETED') {
+          if (!isAdmin || !job.deleted) return false;
+        } else {
+          if (job.deleted) return false;
+          if (fStat === 'OPEN' && job.status === 'Đóng đơn') return false;
+          if (fStat === 'CLOSED' && job.status !== 'Đóng đơn') return false;
+        }
+
+        if (fInd && inferIndustryFromJob(job) !== fInd) return false;
+        if (isAdmin && fComp && (job.company || '').trim() !== fComp) return false;
+
+        if (fExtra === 'HOUSING_YES' && job.housing !== 'YES') return false;
+        if (fExtra === 'GENDER_MALE' && job.gender !== 'MALE') return false;
+        if (fExtra === 'GENDER_FEMALE' && job.gender !== 'FEMALE') return false;
+
+        if (q) {
+          const hay = [
+            isAdmin ? job.company : '',
+            job.jobId, job.location, job.industryVi, job.industryJp,
+            job.workVi, job.workJp, job.salaryVi, job.salaryJp,
+            job.jpReqVi, job.jpReqJp, job.expReqVi, job.expReqJp
+          ].join(' ').toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      const grid = document.getElementById('jobsGrid');
+      const empty = document.getElementById('emptyState');
+      const summary = document.getElementById('summaryCounts');
+
+      const activeTotal = jobsList.filter(j => !j.deleted).length;
+      const openTotal = jobsList.filter(j => !j.deleted && j.status !== 'Đóng đơn').length;
+      const closedTotal = jobsList.filter(j => !j.deleted && j.status === 'Đóng đơn').length;
+
+      summary.textContent = currentLang === 'jp'
+        ? `表示中: ${filtered.length}件（有効合計: ${activeTotal}件 / 募集中: ${openTotal}件 / 募集終了: ${closedTotal}件）`
+        : `Đang hiển thị: ${filtered.length} đơn (Tổng: ${activeTotal} | Đang tuyển: ${openTotal} | Đóng đơn: ${closedTotal})`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+      grid.innerHTML = filtered.map(job => buildJobCardHtml(job)).join('');
+    }
+
+    function buildJobCardHtml(job) {
+      const isJp = currentLang === 'jp';
+      const isClosed = job.status === 'Đóng đơn';
+
+      const statusText = isClosed
+        ? (isJp ? '募集終了' : 'Đóng đơn')
+        : (isJp ? '募集中' : 'Đang tuyển');
+      const statusClass = isClosed ? 'text-red-600 font-bold' : 'text-emerald-700 font-bold';
+
+      // Hạng mục 3 & 3.1: Tiêu đề thẻ theo cấu trúc: Mã đơn | Tỉnh | Ngành nghề (ẩn tên công ty đối tác ở tiêu đề)
+      const industryDisplay = inferIndustryFromJob(job);
+      const workText = isJp ? (job.workJp || job.workVi) : (job.workVi || job.workJp);
+      const salaryText = isJp ? (job.salaryJp || job.salaryVi) : (job.salaryVi || job.salaryJp);
+      const bonusText = isJp ? (job.bonusJp || job.bonusVi) : (job.bonusVi || job.bonusJp);
+      const workTimeText = isJp ? (job.workTimeJp || job.workTimeVi) : (job.workTimeVi || job.workTimeJp);
+      const holidayText = isJp ? (job.holidayJp || job.holidayVi) : (job.holidayVi || job.holidayJp);
+      const jpReqText = isJp ? (job.jpReqJp || job.jpReqVi) : (job.jpReqVi || job.jpReqJp);
+      const expReqText = isJp ? (job.expReqJp || job.expReqVi) : (job.expReqVi || job.expReqJp);
+
+      const labels = isJp
+        ? {
+            salary: '月給',
+            bonus: '賞与 / 昇給',
+            housing: '住居',
+            nationality: '国籍',
+            gender: '性別',
+            quantity: '募集人数',
+            req: '応募条件',
+            jpReq: '日本語要件',
+            expReq: '経験要件',
+            workTime: '勤務時間',
+            holiday: '休日・年間休日数',
+            copyPost: '案内文コピー',
+            detailBtn: '求人詳細',
+            exportImg: '画像保存',
+            edit: '編集',
+            del: '削除',
+            restore: '復元'
+          }
+        : {
+            salary: 'Lương tháng',
+            bonus: 'Thưởng / Tăng lương',
+            housing: 'Nhà ở',
+            nationality: 'Quốc tịch',
+            gender: 'Giới tính',
+            quantity: 'Số lượng tuyển',
+            req: 'Yêu cầu',
+            jpReq: 'Yêu cầu tiếng Nhật',
+            expReq: 'Yêu cầu kinh nghiệm',
+            workTime: 'Thời gian làm việc',
+            holiday: 'Ngày nghỉ / Số ngày nghỉ',
+            copyPost: 'Copy tin gửi',
+            detailBtn: 'Chi tiết đơn',
+            exportImg: 'Chụp ảnh đơn tuyển',
+            edit: 'Sửa',
+            del: 'Xóa',
+            restore: 'Khôi phục'
+          };
+
+      const reqHtml = `
+        <div><span class="font-semibold text-slate-700">${labels.jpReq}:</span> ${formatMultilineHtml(jpReqText || (isJp ? '記載なし' : 'Chưa có thông tin'))}</div>
+        <div class="mt-1"><span class="font-semibold text-slate-700">${labels.expReq}:</span> ${formatMultilineHtml(expReqText || (isJp ? '記載なし' : 'Chưa có thông tin'))}</div>
+      `;
+
+      const safeId = escapeHtml(job.internalId);
+
+      // Hạng mục 5: Nút Sửa / Xóa chỉ hiển thị khi đã đăng nhập Admin
+      const adminActionsHtml = isAdmin
+        ? `<div class="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+            <span class="text-[11px] font-medium text-slate-400">Đối tác: ${escapeHtml(job.company || 'Nội bộ')}</span>
+            <div class="flex items-center gap-1.5">
+              <button onclick="openJobFormModal('${safeId}')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 text-xs font-semibold transition">
+                ✏️ ${labels.edit}
+              </button>
+              ${job.deleted
+                ? `<button onclick="restoreJob('${safeId}')" class="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-semibold transition">♻️ ${labels.restore}</button>`
+                : `<button onclick="softDeleteJob('${safeId}')" class="px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold transition">🗑️ ${labels.del}</button>`
+              }
+            </div>
+          </div>`
+        : '';
+
+      return `
+        <article id="card-${safeId}" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col card-hover ${job.deleted ? 'opacity-70 ring-1 ring-amber-400' : ''}">
+          <!-- Capturable Card Area -->
+          <div id="capture-area-${safeId}" class="bg-white flex-1 flex flex-col">
+            <!-- Card Header (Mint Green - Hạng mục 3 & 3.1: Mã đơn | Tỉnh | Ngành nghề) -->
+            <div class="job-header-mint px-4 py-3 flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="text-sm font-extrabold text-slate-900 leading-snug">
+                  ${escapeHtml(job.jobId || 'N/A')} | ${escapeHtml(job.location || (isJp ? '未定' : 'Nhật Bản'))} | ${escapeHtml(industryDisplay)}
+                </div>
+                <p class="mt-1 text-xs font-medium text-slate-700 leading-snug">
+                  ${formatMultilineHtml(workText || (isJp ? '仕事内容記載なし' : 'Chưa có mô tả công việc'))}
+                </p>
+              </div>
+              <span class="shrink-0 text-xs px-2.5 py-1 rounded-full bg-white border border-slate-200 ${statusClass}">
+                ${statusText}
+              </span>
+            </div>
+
+            <!-- 7-Row Standardized Bilingual Table -->
+            <div class="flex-1">
+              <table class="w-full job-table border-collapse">
+                <tbody>
+                  <tr>
+                    <th>${labels.salary}</th>
+                    <td>${formatMultilineHtml(salaryText || (isJp ? '記載なし' : 'Chưa có thông tin'))}</td>
+                  </tr>
+                  <tr>
+                    <th>${labels.bonus}</th>
+                    <td>${formatMultilineHtml(bonusText || (isJp ? '記載なし' : 'Chưa có thông tin'))}</td>
+                  </tr>
+                  <tr>
+                    <th>${labels.housing}</th>
+                    <td>${formatHousing(job.housing, currentLang)}</td>
+                  </tr>
+                  <tr>
+                    <th>${labels.nationality}</th>
+                    <td>${formatNationalityHtml(job.nationality, currentLang)}</td>
+                  </tr>
+                  <tr>
+                    <th>${labels.gender}</th>
+                    <td>${formatGender(job.gender, currentLang)}</td>
+                  </tr>
+                  <tr>
+                    <th>${labels.quantity}</th>
+                    <td>${formatQuantity(job.quantity, currentLang)}</td>
+                  </tr>
+                  <tr>
+                    <th>${labels.req}</th>
+                    <td>${reqHtml}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Shift & Holiday Sub-footer -->
+            <div class="px-4 py-2.5 bg-slate-50 border-t border-slate-200 text-xs text-slate-600 space-y-1">
+              <div><strong class="text-slate-700">${labels.workTime}:</strong> ${formatMultilineHtml(workTimeText || (isJp ? '記載なし' : 'Chưa có thông tin'))}</div>
+              <div><strong class="text-slate-700">${labels.holiday}:</strong> ${formatMultilineHtml(holidayText || (isJp ? '記載なし' : 'Chưa có thông tin'))}</div>
+            </div>
+          </div>
+
+          <!-- Card Actions (Hạng mục 7.1: 3 nút chuẩn: Copy tin gửi, Chi tiết đơn, Chụp ảnh đơn tuyển) -->
+          <div class="px-3.5 py-3 bg-white border-t border-slate-100">
+            <div class="grid grid-cols-3 gap-1.5">
+              <button onclick="openCopyPostModal('${safeId}')" class="px-2 py-2 rounded-lg bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold transition text-center">
+                ${labels.copyPost}
+              </button>
+              <button onclick="openJobDetailModal('${safeId}')" class="px-2 py-2 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-semibold transition text-center">
+                ${labels.detailBtn}
+              </button>
+              <button onclick="exportJobCardImage('${safeId}')" class="px-2 py-2 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-semibold transition text-center">
+                ${labels.exportImg}
+              </button>
+            </div>
+            ${adminActionsHtml}
+          </div>
+        </article>
+      `;
+    }
+
+    /* ================= JOB DETAIL MODAL (Hạng mục 7.1) ================= */
+    function openJobDetailModal(internalId) {
+      const job = jobsList.find(j => j.internalId === internalId);
+      if (!job) return;
+
+      const isJp = currentLang === 'jp';
+      const ind = inferIndustryFromJob(job);
+      document.getElementById('detailModalTitle').textContent = `${job.jobId || ''} | ${job.location || ''} | ${ind}`;
+      document.getElementById('detailModalSub').textContent = isJp
+        ? '求人票の詳細情報（日越バイリンガル）'
+        : 'Thông tin chi tiết đơn tuyển dụng (Song ngữ Việt – Nhật)';
+
+      const rows = [
+        [isJp ? '募集状況 / Trạng thái' : 'Trạng thái / 募集状況', job.status === 'Đóng đơn' ? 'Đóng đơn / 募集終了' : 'Đang tuyển / 募集中'],
+        [isJp ? '職種 / Ngành nghề' : 'Ngành nghề / 職種', `${job.industryVi || ind} / ${job.industryJp || ind}`],
+        [isJp ? '勤務地 / Địa điểm' : 'Địa điểm / 勤務地', job.location || '—'],
+        [isJp ? '仕事内容 / Công việc' : 'Nội dung công việc / 仕事内容', `<div>${formatMultilineHtml(job.workVi || '')}</div><div class="text-slate-600 mt-1">${formatMultilineHtml(job.workJp || '')}</div>`],
+        [isJp ? '月給 / Lương tháng' : 'Lương tháng / 月給', `<div>${formatMultilineHtml(job.salaryVi || '')}</div><div class="text-slate-600 mt-1">${formatMultilineHtml(job.salaryJp || '')}</div>`],
+        [isJp ? '賞与・昇給 / Thưởng' : 'Thưởng / Tăng lương', `<div>${formatMultilineHtml(job.bonusVi || '')}</div><div class="text-slate-600 mt-1">${formatMultilineHtml(job.bonusJp || '')}</div>`],
+        [isJp ? '住居 / Nhà ở' : 'Nhà ở / 住居', `${formatHousing(job.housing, 'vi')} / ${formatHousing(job.housing, 'jp')}`],
+        [isJp ? '国籍 / Quốc tịch' : 'Quốc tịch / 国籍', formatNationalityHtml(job.nationality, currentLang)],
+        [isJp ? '性別・人数 / Giới tính & SL' : 'Giới tính & Số lượng', `${formatGender(job.gender, 'vi')} (${formatGender(job.gender, 'jp')}) — ${formatQuantity(job.quantity, currentLang)}`],
+        [isJp ? '勤務時間 / Thời gian làm' : 'Thời gian làm việc', `<div>${formatMultilineHtml(job.workTimeVi || '')}</div><div class="text-slate-600 mt-1">${formatMultilineHtml(job.workTimeJp || '')}</div>`],
+        [isJp ? '休日 / Ngày nghỉ' : 'Ngày nghỉ / Số ngày nghỉ', `<div>${formatMultilineHtml(job.holidayVi || '')}</div><div class="text-slate-600 mt-1">${formatMultilineHtml(job.holidayJp || '')}</div>`],
+        [isJp ? '日本語要件 / Tiếng Nhật' : 'Yêu cầu tiếng Nhật', `<div>${formatMultilineHtml(job.jpReqVi || '')}</div><div class="text-slate-600 mt-1">${formatMultilineHtml(job.jpReqJp || '')}</div>`],
+        [isJp ? '経験要件 / Kinh nghiệm' : 'Yêu cầu kinh nghiệm', `<div>${formatMultilineHtml(job.expReqVi || '')}</div><div class="text-slate-600 mt-1">${formatMultilineHtml(job.expReqJp || '')}</div>`]
+      ];
+
+      document.getElementById('detailModalBody').innerHTML = `
+        <table class="w-full job-table border border-slate-200 rounded-xl overflow-hidden border-collapse">
+          <tbody>
+            ${rows.map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      `;
+
+      document.getElementById('btnDetailCopy').onclick = () => {
+        closeModal('jobDetailModal');
+        openCopyPostModal(internalId);
+      };
+      document.getElementById('btnDetailSnap').onclick = () => {
+        exportJobCardImage(internalId);
+      };
+
+      openModal('jobDetailModal');
+    }
+
+    /* ================= COPY FACEBOOK / ZALO POST (Hạng mục 7.1) ================= */
+    function formatSocialPostText(job, mode = 'vi') {
+      const id = job.jobId || '';
+      const loc = job.location || (mode === 'jp' ? '未定' : 'Nhật Bản');
+      const ind = inferIndustryFromJob(job);
+      const statusTag = job.status === 'Đóng đơn'
+        ? (mode === 'jp' ? '【募集終了】' : '🔴 [ĐÃ ĐÓNG ĐƠN]')
+        : (mode === 'jp' ? '【募集中】' : '🔥 [ĐANG TUYỂN GẤP]');
+
+      const workVi = job.workVi || job.workJp || 'Chưa có thông tin';
+      const workJp = job.workJp || job.workVi || '記載なし';
+      const salaryVi = job.salaryVi || job.salaryJp || 'Chưa có thông tin';
+      const salaryJp = job.salaryJp || job.salaryVi || '記載なし';
+      const bonusVi = job.bonusVi || job.bonusJp || 'Chưa có thông tin';
+      const bonusJp = job.bonusJp || job.bonusVi || '記載なし';
+      const workTimeVi = job.workTimeVi || job.workTimeJp || 'Chưa có thông tin';
+      const workTimeJp = job.workTimeJp || job.workTimeVi || '記載なし';
+      const holidayVi = job.holidayVi || job.holidayJp || 'Chưa có thông tin';
+      const holidayJp = job.holidayJp || job.holidayVi || '記載なし';
+      const jpReqVi = job.jpReqVi || job.jpReqJp || 'Chưa có thông tin';
+      const jpReqJp = job.jpReqJp || job.jpReqVi || '記載なし';
+      const expReqVi = job.expReqVi || job.expReqJp || 'Chưa có thông tin';
+      const expReqJp = job.expReqJp || job.expReqVi || '記載なし';
+
+      const housingVi = formatHousing(job.housing, 'vi');
+      const housingJp = formatHousing(job.housing, 'jp');
+      const genderVi = formatGender(job.gender, 'vi');
+      const genderJp = formatGender(job.gender, 'jp');
+      const qtyVi = (job.quantity || '').trim() || 'Chưa có thông tin';
+      const qtyJp = (job.quantity || '').trim() || '記載なし';
+      const natVi = formatNationalityPlain(job.nationality, 'vi');
+      const natJp = formatNationalityPlain(job.nationality, 'jp');
+
+      const locTag = loc ? `#${loc.replace(/\s+/g, '')}` : '';
+
+      if (mode === 'jp') {
+        return `${statusTag} ${id} | ${loc} | ${ind}
+━━━━━━━━━━━━━━━━━━
+💼 仕事内容: ${workJp}
+💴 月給: ${salaryJp}
+🎁 賞与 / 昇給: ${bonusJp}
+🏠 住居: ${housingJp}
+🌏 国籍: ${natJp}
+👤 性別: ${genderJp} | 募集人数: ${qtyJp}
+⏰ 勤務時間: ${workTimeJp}
+📅 休日・年間休日数: ${holidayJp}
+📝 応募条件:
+・日本語要件: ${jpReqJp}
+・経験要件: ${expReqJp}
+━━━━━━━━━━━━━━━━━━
+📩 ご興味のある方は求人ID【${id}】を添えてお気軽にご連絡ください！
+#MINAMIKYUJIN #特定技能 #日本就職 ${locTag}`;
+      }
+
+      if (mode === 'bi') {
+        return `${statusTag} ${id} | ${loc} | ${ind}
+━━━━━━━━━━━━━━━━━━
+💼 Công việc / 仕事内容:
+- ${workVi}
+- ${workJp}
+
+💴 Lương tháng / 月給:
+- ${salaryVi}
+- ${salaryJp}
+
+🎁 Thưởng & Tăng lương / 賞与・昇給:
+- ${bonusVi} / ${bonusJp}
+
+🏠 Nhà ở / 住居: ${housingVi} (${housingJp})
+🌏 Quốc tịch / 国籍: ${natVi}
+👤 Giới tính / 性別: ${genderVi} (${genderJp}) | Số lượng: ${qtyVi}
+⏰ Thời gian làm việc / 勤務時間: ${workTimeVi} (${workTimeJp})
+📅 Ngày nghỉ / 休日: ${holidayVi} (${holidayJp})
+
+📝 Yêu cầu / 応募条件:
+- Tiếng Nhật / 日本語: ${jpReqVi} (${jpReqJp})
+- Kinh nghiệm / 経験: ${expReqVi} (${expReqJp})
+━━━━━━━━━━━━━━━━━━
+📩 Inbox ngay kèm Mã đơn [${id}] để được tư vấn và phỏng vấn sớm nhất!
+#MinamiKyujinShare #ViecLamNhatBan #TokuteiGino ${locTag}`;
+      }
+
+      return `${statusTag} ${id} | ${loc} | ${ind}
+━━━━━━━━━━━━━━━━━━
+💼 Nội dung công việc: ${workVi}
+💴 Lương tháng: ${salaryVi}
+🎁 Thưởng / Tăng lương: ${bonusVi}
+🏠 Nhà ở: ${housingVi}
+🌏 Quốc tịch: ${natVi}
+👤 Giới tính: ${genderVi} | Số lượng tuyển: ${qtyVi}
+⏰ Thời gian làm việc: ${workTimeVi}
+📅 Ngày nghỉ: ${holidayVi}
+📝 Yêu cầu ứng viên:
+• Tiếng Nhật: ${jpReqVi}
+• Kinh nghiệm: ${expReqVi}
+━━━━━━━━━━━━━━━━━━
+📩 Quan tâm vui lòng nhắn tin kèm Mã đơn [${id}] để nhận form đăng ký phỏng vấn!
+#MinamiKyujinShare #TuyenDungNhatBan #TokuteiGino #KySuNhatBan ${locTag}`;
+    }
+
+    function openCopyPostModal(internalId) {
+      const job = jobsList.find(j => j.internalId === internalId);
+      if (!job) return;
+      activeCopyJobId = internalId;
+      switchCopyPostLang(currentLang === 'jp' ? 'jp' : 'vi');
+      openModal('copyPostModal');
+    }
+
+    function switchCopyPostLang(mode) {
+      const job = jobsList.find(j => j.internalId === activeCopyJobId);
+      if (!job) return;
+
+      ['vi', 'jp', 'bi'].forEach(m => {
+        const btn = document.getElementById('btnPostLang' + m.charAt(0).toUpperCase() + m.slice(1));
+        if (btn) {
+          btn.className = m === mode
+            ? 'px-2.5 py-1 rounded-md font-semibold bg-emerald-600 text-white'
+            : 'px-2.5 py-1 rounded-md font-semibold text-slate-700';
+        }
+      });
+
+      document.getElementById('copyPostTextarea').value = formatSocialPostText(job, mode);
+    }
+
+    async function copyGeneratedPostText() {
+      const txt = document.getElementById('copyPostTextarea').value;
+      try {
+        await navigator.clipboard.writeText(txt);
+        showToast('✅ Đã sao chép nội dung tin gửi!');
+        closeModal('copyPostModal');
+      } catch (e) {
+        const ta = document.getElementById('copyPostTextarea');
+        ta.select();
+        document.execCommand('copy');
+        showToast('✅ Đã sao chép nội dung!');
+        closeModal('copyPostModal');
+      }
+    }
+
+    /* ================= EXPORT JOB CARD PNG IMAGE (Hạng mục 7.1) ================= */
+    async function exportJobCardImage(internalId) {
+      const job = jobsList.find(j => j.internalId === internalId);
+      const captureEl = document.getElementById('capture-area-' + internalId);
+      if (!job || !captureEl) return;
+
+      if (typeof html2canvas === 'undefined') {
+        alert('Thư viện xuất ảnh đang tải, vui lòng thử lại sau vài giây.');
+        return;
+      }
+
+      showToast('⏳ Đang tạo ảnh thẻ đơn tuyển...');
+      try {
+        const canvas = await html2canvas(captureEl, {
+          scale: 2.5,
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          logging: false
+        });
+
+        const safeJobId = (job.jobId || 'KYUJIN').replace(/[^a-zA-Z0-9_-]/g, '_');
+        const link = document.createElement('a');
+        link.download = `MINAMI_${safeJobId}_${currentLang.toUpperCase()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast(`🖼️ Đã tải xuống ảnh thẻ đơn ${job.jobId}!`);
+      } catch (err) {
+        alert('Không thể xuất ảnh thẻ: ' + err.message);
+      }
+    }
+
+    /* ================= MODALS & CRUD ================= */
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+      if (id === 'jobModal') {
+        setTimeout(() => {
+          bindAutoResizeAll();
+          renderNationalityPicker();
+        }, 30);
+      }
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function openJobFormModal(internalId) {
+      if (!isAdmin) {
+        handleAdminAuthClick();
+        return;
+      }
+      const job = internalId ? jobsList.find(j => j.internalId === internalId) : null;
+      document.getElementById('editInternalId').value = job ? job.internalId : '';
+      document.getElementById('jobModalTitle').textContent = job
+        ? `Cập nhật đơn tuyển (UPDATE): ${job.jobId}`
+        : 'Thêm đơn tuyển mới (UPDATE)';
+
+      document.getElementById('fJobId').value = job ? (job.jobId || '') : '';
+      document.getElementById('fIndustryVi').value = job ? (job.industryVi || '') : '';
+      document.getElementById('fIndustryJp').value = job ? (job.industryJp || '') : '';
+      document.getElementById('fCompany').value = job ? (job.company || '') : '';
+      document.getElementById('fStatus').value = job ? (job.status || 'Đang tuyển') : 'Đang tuyển';
+      document.getElementById('fLocation').value = job ? (job.location || '') : '';
+      document.getElementById('fHousing').value = job ? (job.housing || 'UNKNOWN') : 'UNKNOWN';
+      document.getElementById('fGender').value = job ? (job.gender || 'BOTH') : 'BOTH';
+      document.getElementById('fQuantity').value = job ? (job.quantity || '') : '';
+      document.getElementById('fNationality').value = job ? (job.nationality || '') : '';
+
+      document.getElementById('fWorkVi').value = job ? (job.workVi || '') : '';
+      document.getElementById('fWorkJp').value = job ? (job.workJp || '') : '';
+      document.getElementById('fSalaryVi').value = job ? (job.salaryVi || '') : '';
+      document.getElementById('fSalaryJp').value = job ? (job.salaryJp || '') : '';
+      document.getElementById('fBonusVi').value = job ? (job.bonusVi || '') : '';
+      document.getElementById('fBonusJp').value = job ? (job.bonusJp || '') : '';
+      document.getElementById('fWorkTimeVi').value = job ? (job.workTimeVi || '') : '';
+      document.getElementById('fWorkTimeJp').value = job ? (job.workTimeJp || '') : '';
+      document.getElementById('fHolidayVi').value = job ? (job.holidayVi || '') : '';
+      document.getElementById('fHolidayJp').value = job ? (job.holidayJp || '') : '';
+      document.getElementById('fJpReqVi').value = job ? (job.jpReqVi || '') : '';
+      document.getElementById('fJpReqJp').value = job ? (job.jpReqJp || '') : '';
+      document.getElementById('fExpReqVi').value = job ? (job.expReqVi || '') : '';
+      document.getElementById('fExpReqJp').value = job ? (job.expReqJp || '') : '';
+
+      openModal('jobModal');
+    }
+
+    function saveJobFromModal() {
+      const jobId = document.getElementById('fJobId').value.trim();
+      const industryVi = document.getElementById('fIndustryVi').value.trim();
+      const location = document.getElementById('fLocation').value.trim();
+      if (!jobId || !location) {
+        alert('Vui lòng nhập đầy đủ Mã đơn ID và Địa điểm (Tỉnh)!');
+        return;
+      }
+
+      const internalId = document.getElementById('editInternalId').value || ('job_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6));
+      const existingIdx = jobsList.findIndex(j => j.internalId === internalId);
+      const industryJp = document.getElementById('fIndustryJp').value.trim() || simpleRuleTranslate(industryVi, 'vi_to_jp');
+
+      const payload = {
+        internalId,
+        company: document.getElementById('fCompany').value.trim() || 'MINAMI',
+        jobId,
+        industryVi: industryVi || simpleRuleTranslate(industryJp, 'jp_to_vi'),
+        industryJp,
+        status: document.getElementById('fStatus').value,
+        location,
+        housing: document.getElementById('fHousing').value,
+        gender: document.getElementById('fGender').value,
+        quantity: document.getElementById('fQuantity').value.trim(),
+        nationality: document.getElementById('fNationality').value.trim(),
+        workVi: document.getElementById('fWorkVi').value.trim(),
+        workJp: document.getElementById('fWorkJp').value.trim(),
+        salaryVi: document.getElementById('fSalaryVi').value.trim(),
+        salaryJp: document.getElementById('fSalaryJp').value.trim(),
+        bonusVi: document.getElementById('fBonusVi').value.trim(),
+        bonusJp: document.getElementById('fBonusJp').value.trim(),
+        workTimeVi: document.getElementById('fWorkTimeVi').value.trim(),
+        workTimeJp: document.getElementById('fWorkTimeJp').value.trim(),
+        holidayVi: document.getElementById('fHolidayVi').value.trim(),
+        holidayJp: document.getElementById('fHolidayJp').value.trim(),
+        jpReqVi: document.getElementById('fJpReqVi').value.trim(),
+        jpReqJp: document.getElementById('fJpReqJp').value.trim(),
+        expReqVi: document.getElementById('fExpReqVi').value.trim(),
+        expReqJp: document.getElementById('fExpReqJp').value.trim(),
+        deleted: existingIdx >= 0 ? Boolean(jobsList[existingIdx].deleted) : false,
+        deletedAt: existingIdx >= 0 ? jobsList[existingIdx].deletedAt : null,
+        updatedAt: new Date().toISOString()
+      };
+
+      if (existingIdx >= 0) {
+        jobsList[existingIdx] = payload;
+      } else {
+        jobsList.unshift(payload);
+      }
+
+      saveJobsToStorage(true);
+      renderJobs();
+      closeModal('jobModal');
+      showToast('Đã lưu đơn tuyển ' + jobId);
+    }
+
+    function softDeleteJob(internalId) {
+      if (!isAdmin) return;
+      const job = jobsList.find(j => j.internalId === internalId);
+      if (!job) return;
+      job.deleted = true;
+      job.deletedAt = new Date().toISOString();
+      job.updatedAt = new Date().toISOString();
+      saveJobsToStorage(true);
+      renderJobs();
+      showToast('Đã chuyển đơn ' + job.jobId + ' vào danh sách xóa mềm.');
+    }
+
+    function restoreJob(internalId) {
+      if (!isAdmin) return;
+      const job = jobsList.find(j => j.internalId === internalId);
+      if (!job) return;
+      job.deleted = false;
+      job.deletedAt = null;
+      job.updatedAt = new Date().toISOString();
+      saveJobsToStorage(true);
+      renderJobs();
+      showToast('Đã khôi phục đơn ' + job.jobId);
+    }
+
+    function simpleRuleTranslate(text, direction) {
+      if (!text) return '';
+      let out = text;
+      if (direction === 'vi_to_jp') {
+        DICT_VI_JP.forEach(([vi, jp]) => {
+          const re = new RegExp(vi.replace(/[.*+?^${}()|[\]\]/g, '\$&'), 'gi');
+          out = out.replace(re, jp);
+        });
+        out = out.replace(/(\d[\d,\.]*)\s*yên/gi, '$1円')
+                 .replace(/(\d[\d,\.]*)\s*man/gi, '$1万円')
+                 .replace(/lần\/năm/gi, '回/年')
+                 .replace(/ngày\/năm/gi, '日/年')
+                 .replace(/phút/gi, '分');
+      } else {
+        DICT_VI_JP.forEach(([vi, jp]) => {
+          const re = new RegExp(jp.replace(/[.*+?^${}()|[\]\]/g, '\$&'), 'g');
+          out = out.replace(re, vi);
+        });
+        out = out.replace(/(\d[\d,\.]*)円/g, '$1 yên')
+                 .replace(/(\d[\d,\.]*)万円/g, '$1 man')
+                 .replace(/回\/年/g, ' lần/năm')
+                 .replace(/日\/年/g, ' ngày/năm')
+                 .replace(/休憩(\d+)分/g, 'Nghỉ giải lao $1 phút');
+      }
+      return out;
+    }
+
+    function translateFormFields(direction) {
+      const pairs = [
+        ['fIndustryVi', 'fIndustryJp'],
+        ['fWorkVi', 'fWorkJp'],
+        ['fSalaryVi', 'fSalaryJp'],
+        ['fBonusVi', 'fBonusJp'],
+        ['fWorkTimeVi', 'fWorkTimeJp'],
+        ['fHolidayVi', 'fHolidayJp'],
+        ['fJpReqVi', 'fJpReqJp'],
+        ['fExpReqVi', 'fExpReqJp']
+      ];
+      pairs.forEach(([viId, jpId]) => {
+        const viEl = document.getElementById(viId);
+        const jpEl = document.getElementById(jpId);
+        if (direction === 'vi_to_jp' && viEl.value.trim()) {
+          jpEl.value = simpleRuleTranslate(viEl.value.trim(), 'vi_to_jp');
+        } else if (direction === 'jp_to_vi' && jpEl.value.trim()) {
+          viEl.value = simpleRuleTranslate(jpEl.value.trim(), 'jp_to_vi');
+        }
+      });
+      bindAutoResizeAll();
+      showToast(direction === 'vi_to_jp' ? 'Đã dịch sang tiếng Nhật!' : 'Đã dịch sang tiếng Việt!');
+    }
+
+    /* ================= AI BATCH IMPORT (Hạng mục 4.3 & 6) ================= */
+    function openAiImportModal() {
+      if (!isAdmin) {
+        handleAdminAuthClick();
+        return;
+      }
+      const savedKey = localStorage.getItem(AI_KEY_STORAGE) || '';
+      document.getElementById('aiGeminiKeyInput').value = savedKey;
+      openModal('aiImportModal');
+    }
+
+    function saveAiApiKey() {
+      const val = document.getElementById('aiGeminiKeyInput').value.trim();
+      localStorage.setItem(AI_KEY_STORAGE, val);
+      showToast('Đã lưu Gemini API Key vào trình duyệt.');
+    }
+
+    function clearAiDraft() {
+      document.getElementById('aiRawInput').value = '';
+      document.getElementById('aiFilesStatus').textContent = '';
+      document.getElementById('aiPreviewList').innerHTML = '';
+      document.getElementById('aiExtractSummary').textContent = 'Sẵn sàng nhận file hoặc văn bản đơn tuyển.';
+      document.getElementById('btnCommitAiJobs').disabled = true;
+      aiPreviewBatch = [];
+      batchUploadedFiles = [];
+    }
+
+    function loadSampleBatch5Jobs() {
+      const sample = [
+        'Công ty: LIFT | Mã đơn: LF-301 | Ngành nghề: Chế biến thực phẩm | Tỉnh: Tokyo
+Công việc: Chế biến thực phẩm cơm hộp siêu thị
+Lương: 225,000 yên/tháng | Thưởng: Thưởng 2 lần/năm
+Nhà ở: Có hỗ trợ nhà ở | Quốc tịch: VN, ID, MM | Giới tính: Nam/Nữ | Số lượng: 5 người
+Thời gian: 08:00 ~ 17:00 | Ngày nghỉ: 110 ngày/năm
+Tiếng Nhật: N4 trở lên | Kinh nghiệm: Không yêu cầu kinh nghiệm',
+        'Công ty: CROSLAN | Mã đơn: CR-302 | Ngành nghề: Vệ sinh tòa nhà | Tỉnh: Kanagawa
+Công việc: Vệ sinh tòa nhà văn phòng và khách sạn
+Lương: 215,000 yên/tháng | Thưởng: Tăng lương 1 lần/năm
+Nhà ở: Có ký túc xá | Quốc tịch: VN, NP | Giới tính: Nữ | Số lượng: 4 người
+Thời gian: 07:30 ~ 16:30 | Ngày nghỉ: Nghỉ theo ca (108 ngày/năm)
+Tiếng Nhật: Giao tiếp N4 | Kinh nghiệm: Ưu tiên từng làm vệ sinh',
+        'Công ty: TANCEE | Mã đơn: TN-303 | Ngành nghề: Cơ khí / Chế tạo | Tỉnh: Chiba
+Công việc: Đóng gói linh kiện nhựa công nghiệp
+Lương: 210,000 yên/tháng | Thưởng: Thưởng 2 lần/năm
+Nhà ở: Không có hỗ trợ nhà ở | Quốc tịch: VN | Giới tính: Nam | Số lượng: 3 người
+Thời gian: 08:30 ~ 17:30 | Ngày nghỉ: Thứ 7, Chủ nhật (115 ngày/năm)
+Tiếng Nhật: N4 | Kinh nghiệm: Không yêu cầu',
+        'Công ty: SHINWA | Mã đơn: SW-304 | Ngành nghề: Nhà hàng | Tỉnh: Saitama
+Công việc: Phục vụ và phụ bếp nhà hàng Yakiniku
+Lương: 240,000 yên/tháng | Thưởng: Thưởng theo doanh thu
+Nhà ở: Có hỗ trợ nhà ở | Quốc tịch: Không yêu cầu quốc tịch | Giới tính: Nam/Nữ
+Thời gian: 10:00 ~ 22:00 (Shift 8h) | Ngày nghỉ: 8 ngày/tháng
+Tiếng Nhật: N3 trở lên | Kinh nghiệm: Có kinh nghiệm nhà hàng',
+        'Công ty: MINAMI | Mã đơn: MN-305 | Ngành nghề: Điều dưỡng (Kaigo) | Tỉnh: Fukuoka
+Công việc: Chăm sóc người cao tuổi tại viện dưỡng lão
+Lương: 230,000 yên/tháng | Thưởng: Thưởng 2 lần/năm
+Nhà ở: Có ký túc xá gần viện | Quốc tịch: VN, ID | Giới tính: Nữ | Số lượng: 6 người
+Thời gian: Làm theo ca 8 tiếng | Ngày nghỉ: 112 ngày/năm
+Tiếng Nhật: N4 hoặc JFT A2 | Kinh nghiệm: Đã có chứng chỉ Kaigo'
+      ].join('
+---
+');
+      document.getElementById('aiRawInput').value = sample;
+      showToast('Đã nạp 5 đơn mẫu. Nhấn "Xử lý dữ liệu & Kiểm tra nội dung".');
+    }
+
+    async function processSelectedFiles(fileList) {
+      const files = Array.from(fileList || []).slice(0, 10);
+      if (!files.length) return;
+      const textChunks = [];
+      let imageCount = 0;
+
+      for (const f of files) {
+        const ext = f.name.split('.').pop().toLowerCase();
+        if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
+          const dataUrl = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.readAsDataURL(f);
+          });
+          batchUploadedFiles.push({ name: f.name, type: 'image', mime: f.type || 'image/jpeg', dataUrl });
+          imageCount++;
+        } else if (['xlsx', 'xls', 'csv'].includes(ext) && typeof XLSX !== 'undefined') {
+          const buf = await f.arrayBuffer();
+          const wb = XLSX.read(buf, { type: 'array' });
+          const sheetTxt = wb.SheetNames.map(s => XLSX.utils.sheet_to_csv(wb.Sheets[s])).join('
+---
+');
+          textChunks.push(`/* EXCEL: ${f.name} */
+` + sheetTxt.trim());
+        } else if (ext === 'docx' && typeof mammoth !== 'undefined') {
+          const buf = await f.arrayBuffer();
+          const res = await mammoth.extractRawText({ arrayBuffer: buf });
+          textChunks.push(`/* DOCX: ${f.name} */
+` + (res.value || '').trim());
+        } else if (ext === 'pdf' && typeof pdfjsLib !== 'undefined') {
+          const buf = await f.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+          let fullPdf = '';
+          for (let p = 1; p <= Math.min(pdf.numPages, 15); p++) {
+            const page = await pdf.getPage(p);
+            const content = await page.getTextContent();
+            fullPdf += content.items.map(it => it.str).join(' ') + '
+';
+          }
+          textChunks.push(`/* PDF: ${f.name} */
+` + fullPdf.trim());
+        } else {
+          const txt = await f.text();
+          textChunks.push(`/* FILE: ${f.name} */
+` + txt.trim());
+        }
+      }
+
+      if (textChunks.length) {
+        const existing = document.getElementById('aiRawInput').value.trim();
+        document.getElementById('aiRawInput').value = (existing ? existing + '
+---
+' : '') + textChunks.join('
+---
+');
+      }
+
+      document.getElementById('aiFilesStatus').textContent =
+        `Đã nạp ${files.length} file${imageCount ? ` (gồm ${imageCount} ảnh — cần Gemini API Key để OCR ảnh)` : ''}.`;
+    }
+
+    function handleAiFilesUpload(event) {
+      processSelectedFiles(event.target.files);
+    }
+
+    function setupDragAndDrop() {
+      const zone = document.getElementById('aiDropZone');
+      if (!zone || zone.dataset.boundDrop) return;
+      zone.dataset.boundDrop = '1';
+      ['dragenter', 'dragover'].forEach(ev => {
+        zone.addEventListener(ev, e => {
+          e.preventDefault();
+          zone.classList.add('bg-indigo-100', 'border-indigo-600');
+        });
+      });
+      ['dragleave', 'drop'].forEach(ev => {
+        zone.addEventListener(ev, e => {
+          e.preventDefault();
+          zone.classList.remove('bg-indigo-100', 'border-indigo-600');
+        });
+      });
+      zone.addEventListener('drop', e => {
+        if (e.dataTransfer && e.dataTransfer.files) {
+          processSelectedFiles(e.dataTransfer.files);
+        }
+      });
+    }
+
+    function parseSingleJobBlock(rawBlock, idx) {
+      const txt = rawBlock.trim();
+      const getField = (regex) => {
+        const m = txt.match(regex);
+        return m && m[1] ? m[1].trim() : '';
+      };
+
+      const company = getField(/(?:công ty|cty|company|会社名)\s*[:：]\s*([^
+|]+)/i) || 'MINAMI';
+      const jobId = getField(/(?:mã đơn|mã id|id|job id|求人id)\s*[:：]\s*([^
+|]+)/i) || ('AI-' + (100 + idx));
+      const industryRaw = getField(/(?:ngành nghề|ngành|lĩnh vực|職種)\s*[:：]\s*([^
+|]+)/i) || '';
+      const location = getField(/(?:tỉnh|địa điểm|khu vực|勤務地)\s*[:：]\s*([^
+|]+)/i) || '';
+      const workRaw = getField(/(?:công việc|nội dung công việc|業務内容|仕事内容)\s*[:：]\s*([^
+]+)/i) || txt.split('
+')[0];
+      const salaryRaw = getField(/(?:lương|mức lương|月給)\s*[:：]\s*([^
+|]+)/i) || '';
+      const bonusRaw = getField(/(?:thưởng|tăng lương|賞与|昇給)\s*[:：]\s*([^
+|]+)/i) || '';
+      const housingRaw = getField(/(?:nhà ở|ký túc xá|ktx|住居)\s*[:：]\s*([^
+|]+)/i) || '';
+      const nationality = getField(/(?:quốc tịch|国籍)\s*[:：]\s*([^
+|]+)/i) || '';
+      const genderRaw = getField(/(?:giới tính|性別)\s*[:：]\s*([^
+|]+)/i) || '';
+      const quantity = getField(/(?:số lượng|tuyển|募集人数)\s*[:：]\s*([^
+|]+)/i) || '';
+      const workTimeRaw = getField(/(?:thời gian|giờ làm|ca làm|勤務時間)\s*[:：]\s*([^
+|]+)/i) || '';
+      const holidayRaw = getField(/(?:ngày nghỉ|nghỉ|休日)\s*[:：]\s*([^
+|]+)/i) || '';
+      const jpReqRaw = getField(/(?:tiếng nhật|trình độ tiếng|日本語)\s*[:：]\s*([^
+|]+)/i) || '';
+      const expReqRaw = getField(/(?:kinh nghiệm|yêu cầu khác|経験)\s*[:：]\s*([^
+|]+)/i) || '';
+
+      let housing = 'UNKNOWN';
+      if (/không có|không hỗ trợ|なし/i.test(housingRaw)) housing = 'NO';
+      else if (/có|ký túc|ktx|あり/i.test(housingRaw)) housing = 'YES';
+
+      let gender = 'BOTH';
+      if (/nam\s*\/\s*nữ|男女|cả hai/i.test(genderRaw)) gender = 'BOTH';
+      else if (/chỉ tuyển nam|nam|男性/i.test(genderRaw)) gender = 'MALE';
+      else if (/chỉ tuyển nữ|nữ|女性/i.test(genderRaw)) gender = 'FEMALE';
+
+      const isJapaneseSource = /[぀-ヿ一-龯]/.test(workRaw + salaryRaw);
+      const industryVi = isJapaneseSource ? simpleRuleTranslate(industryRaw, 'jp_to_vi') : industryRaw;
+      const industryJp = isJapaneseSource ? industryRaw : simpleRuleTranslate(industryRaw, 'vi_to_jp');
+      const workVi = isJapaneseSource ? simpleRuleTranslate(workRaw, 'jp_to_vi') : workRaw;
+      const workJp = isJapaneseSource ? workRaw : simpleRuleTranslate(workRaw, 'vi_to_jp');
+      const salaryVi = isJapaneseSource ? simpleRuleTranslate(salaryRaw, 'jp_to_vi') : salaryRaw;
+      const salaryJp = isJapaneseSource ? salaryRaw : simpleRuleTranslate(salaryRaw, 'vi_to_jp');
+      const bonusVi = isJapaneseSource ? simpleRuleTranslate(bonusRaw, 'jp_to_vi') : bonusRaw;
+      const bonusJp = isJapaneseSource ? bonusRaw : simpleRuleTranslate(bonusRaw, 'vi_to_jp');
+      const workTimeVi = isJapaneseSource ? simpleRuleTranslate(workTimeRaw, 'jp_to_vi') : workTimeRaw;
+      const workTimeJp = isJapaneseSource ? workTimeRaw : simpleRuleTranslate(workTimeRaw, 'vi_to_jp');
+      const holidayVi = isJapaneseSource ? simpleRuleTranslate(holidayRaw, 'jp_to_vi') : holidayRaw;
+      const holidayJp = isJapaneseSource ? holidayRaw : simpleRuleTranslate(holidayRaw, 'vi_to_jp');
+      const jpReqVi = isJapaneseSource ? simpleRuleTranslate(jpReqRaw, 'jp_to_vi') : jpReqRaw;
+      const jpReqJp = isJapaneseSource ? jpReqRaw : simpleRuleTranslate(jpReqRaw, 'vi_to_jp');
+      const expReqVi = isJapaneseSource ? simpleRuleTranslate(expReqRaw, 'jp_to_vi') : expReqRaw;
+      const expReqJp = isJapaneseSource ? expReqRaw : simpleRuleTranslate(expReqRaw, 'vi_to_jp');
+
+      const needsReview = [];
+      if (!location) needsReview.push('Thiếu Tỉnh/Địa điểm');
+      if (!salaryVi) needsReview.push('Thiếu Lương');
+      if (housing === 'UNKNOWN') needsReview.push('Nhà ở chưa rõ');
+
+      return {
+        rawSource: txt,
+        needsReview,
+        data: {
+          internalId: 'job_ai_' + Date.now() + '_' + idx,
+          company,
+          jobId,
+          industryVi,
+          industryJp,
+          location,
+          status: 'Đang tuyển',
+          quantity,
+          workVi,
+          workJp,
+          salaryVi,
+          salaryJp,
+          bonusVi,
+          bonusJp,
+          housing,
+          nationality,
+          gender,
+          workTimeVi,
+          workTimeJp,
+          holidayVi,
+          holidayJp,
+          jpReqVi,
+          jpReqJp,
+          expReqVi,
+          expReqJp,
+          deleted: false,
+          deletedAt: null,
+          updatedAt: new Date().toISOString()
+        }
+      };
+    }
+
+    async function runBatchAiExtraction() {
+      const raw = document.getElementById('aiRawInput').value.trim();
+      const images = batchUploadedFiles.filter(f => f.type === 'image');
+
+      if (!raw && !images.length) {
+        alert('Vui lòng dán nội dung đơn hàng hoặc kéo thả file trước!');
+        return;
+      }
+
+      const blocks = raw ? raw.split(/
+\s*---+\s*
+|
+{3,}/).map(b => b.trim()).filter(Boolean).slice(0, 10) : [];
+      const apiKey = (document.getElementById('aiGeminiKeyInput').value || '').trim();
+
+      if (apiKey) {
+        try {
+          document.getElementById('aiExtractSummary').textContent = 'Đang phân tích dữ liệu & dịch song ngữ Việt – Nhật...';
+          const prompt = `Trích xuất tối đa 10 đơn tuyển dụng Nhật Bản từ văn bản và hình ảnh đính kèm thành mảng JSON chuẩn.
+Quy tắc bắt buộc: Không tự suy diễn dữ liệu; trường nào không có thì để chuỗi rỗng "".
+Mỗi phần tử có các khóa: company, jobId, industryVi, industryJp, location, status ("Đang tuyển"), quantity, workVi, workJp, salaryVi, salaryJp, bonusVi, bonusJp, housing ("YES"|"NO"|"UNKNOWN"), nationality (mã quốc gia cách nhau dấu phẩy như VN, ID, MM nếu có), gender ("MALE"|"FEMALE"|"BOTH"), workTimeVi, workTimeJp, holidayVi, holidayJp, jpReqVi, jpReqJp, expReqVi, expReqJp.
+Chỉ trả về JSON thuần.
+
+Văn bản:
+${raw}`;
+
+          const parts = [{ text: prompt }];
+          images.forEach(img => {
+            const base64Data = img.dataUrl.split(',')[1];
+            if (base64Data) {
+              parts.push({ inline_data: { mime_type: img.mime, data: base64Data } });
+            }
+          });
+
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts }] })
+          });
+
+          if (res.ok) {
+            const json = await res.json();
+            const textOut = json?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            const cleaned = textOut.replace(/```json|```/g, '').trim();
+            const parsedArr = JSON.parse(cleaned);
+            if (Array.isArray(parsedArr) && parsedArr.length > 0) {
+              aiPreviewBatch = parsedArr.slice(0, 10).map((item, i) => {
+                const review = [];
+                if (!item.location) review.push('Thiếu Tỉnh/Địa điểm');
+                if (!item.salaryVi && !item.salaryJp) review.push('Thiếu Lương');
+                if (!item.quantity) review.push('Thiếu Số lượng');
+                return {
+                  rawSource: blocks[i] || (images[i] ? `[Ảnh: ${images[i].name}]` : raw),
+                  needsReview: review,
+                  data: {
+                    internalId: 'job_ai_' + Date.now() + '_' + i,
+                    company: item.company || 'MINAMI',
+                    jobId: item.jobId || ('AI-' + (200 + i)),
+                    industryVi: item.industryVi || '',
+                    industryJp: item.industryJp || '',
+                    location: item.location || '',
+                    status: item.status || 'Đang tuyển',
+                    quantity: item.quantity || '',
+                    workVi: item.workVi || '',
+                    workJp: item.workJp || '',
+                    salaryVi: item.salaryVi || '',
+                    salaryJp: item.salaryJp || '',
+                    bonusVi: item.bonusVi || '',
+                    bonusJp: item.bonusJp || '',
+                    housing: ['YES', 'NO', 'UNKNOWN'].includes(item.housing) ? item.housing : 'UNKNOWN',
+                    nationality: item.nationality || '',
+                    gender: ['MALE', 'FEMALE', 'BOTH'].includes(item.gender) ? item.gender : 'BOTH',
+                    workTimeVi: item.workTimeVi || '',
+                    workTimeJp: item.workTimeJp || '',
+                    holidayVi: item.holidayVi || '',
+                    holidayJp: item.holidayJp || '',
+                    jpReqVi: item.jpReqVi || '',
+                    jpReqJp: item.jpReqJp || '',
+                    expReqVi: item.expReqVi || '',
+                    expReqJp: item.expReqJp || '',
+                    deleted: false,
+                    deletedAt: null,
+                    updatedAt: new Date().toISOString()
+                  }
+                };
+              });
+              renderAiPreviewList();
+              return;
+            }
+          }
+        } catch (err) {
+          console.warn('Gemini API fallback to local parser:', err);
+        }
+      } else if (images.length > 0 && !raw) {
+        alert('Bạn đang tải lên file ảnh. Vui lòng nhập Gemini API Key ở ô phía trên để trích xuất văn bản từ ảnh!');
+        return;
+      }
+
+      aiPreviewBatch = blocks.map((blk, i) => parseSingleJobBlock(blk, i + 1));
+      renderAiPreviewList();
+    }
+
+    function renderAiPreviewList() {
+      const container = document.getElementById('aiPreviewList');
+      const btnCommit = document.getElementById('btnCommitAiJobs');
+      const summary = document.getElementById('aiExtractSummary');
+
+      if (!aiPreviewBatch.length) {
+        container.innerHTML = '';
+        btnCommit.disabled = true;
+        summary.textContent = 'Không tách được đơn tuyển nào.';
+        return;
+      }
+
+      btnCommit.disabled = false;
+      summary.textContent = `Đã trích xuất ${aiPreviewBatch.length} đơn tuyển. Kiểm tra và chỉnh sửa nhanh bên dưới trước khi lưu:`;
+
+      container.innerHTML = aiPreviewBatch.map((item, idx) => {
+        const d = item.data;
+        const warnBadge = item.needsReview.length
+          ? `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[11px] font-semibold">⚠️ Cần kiểm tra: ${escapeHtml(item.needsReview.join(', '))}</span>`
+          : `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[11px] font-semibold">✓ Đủ trường cơ bản</span>`;
+
+        return `
+          <div class="border border-slate-300 rounded-xl p-4 bg-slate-50 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-xs text-indigo-900">Đơn #${idx + 1}</span>
+                ${warnBadge}
+              </div>
+              <button onclick="removeAiPreviewItem(${idx})" class="text-xs text-red-600 hover:underline font-semibold">Xóa thẻ này</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600">Mã đơn ID</label>
+                <input value="${escapeHtml(d.jobId)}" onchange="updateAiPreviewField(${idx}, 'jobId', this.value)" class="w-full rounded border border-slate-300 bg-white px-2 py-1" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600">Tỉnh / Địa điểm</label>
+                <input value="${escapeHtml(d.location)}" onchange="updateAiPreviewField(${idx}, 'location', this.value)" class="w-full rounded border border-slate-300 bg-white px-2 py-1" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600">Ngành nghề (VI)</label>
+                <input value="${escapeHtml(d.industryVi)}" onchange="updateAiPreviewField(${idx}, 'industryVi', this.value)" class="w-full rounded border border-slate-300 bg-white px-2 py-1" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600">Quốc tịch (VN, ID, MM...)</label>
+                <input value="${escapeHtml(d.nationality)}" onchange="updateAiPreviewField(${idx}, 'nationality', this.value)" class="w-full rounded border border-slate-300 bg-white px-2 py-1" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600">Công việc (VI)</label>
+                <input value="${escapeHtml(d.workVi)}" onchange="updateAiPreviewField(${idx}, 'workVi', this.value)" class="w-full rounded border border-slate-300 bg-white px-2 py-1" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600">仕事内容 (JP)</label>
+                <input value="${escapeHtml(d.workJp)}" onchange="updateAiPreviewField(${idx}, 'workJp', this.value)" class="w-full rounded border border-slate-300 bg-white px-2 py-1" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600">Lương tháng (VI)</label>
+                <input value="${escapeHtml(d.salaryVi)}" onchange="updateAiPreviewField(${idx}, 'salaryVi', this.value)" class="w-full rounded border border-slate-300 bg-white px-2 py-1" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600">月給 (JP)</label>
+                <input value="${escapeHtml(d.salaryJp)}" onchange="updateAiPreviewField(${idx}, 'salaryJp', this.value)" class="w-full rounded border border-slate-300 bg-white px-2 py-1" />
+              </div>
+            </div>
+
+            <details class="text-[11px] text-slate-500">
+              <summary class="cursor-pointer font-semibold text-slate-600">Xem dữ liệu gốc</summary>
+              <pre class="mt-1 p-2 rounded bg-white border border-slate-200 whitespace-pre-wrap">${escapeHtml(item.rawSource)}</pre>
+            </details>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateAiPreviewField(idx, field, val) {
+      if (aiPreviewBatch[idx]) {
+        aiPreviewBatch[idx].data[field] = val.trim();
+      }
+    }
+
+    function removeAiPreviewItem(idx) {
+      aiPreviewBatch.splice(idx, 1);
+      renderAiPreviewList();
+    }
+
+    function commitAiExtractedJobs() {
+      if (!aiPreviewBatch.length) return;
+      const newItems = aiPreviewBatch.map(x => x.data);
+      jobsList = [...newItems, ...jobsList];
+      saveJobsToStorage(true);
+      renderJobs();
+      clearAiDraft();
+      closeModal('aiImportModal');
+      showToast(`Đã lưu thành công ${newItems.length} đơn tuyển mới!`);
+    }
+
+    /* ================= COMPANY STATS ================= */
+    function openStatsModal() {
+      if (!isAdmin) {
+        handleAdminAuthClick();
+        return;
+      }
+      const map = new Map();
+      jobsList.forEach(job => {
+        const comp = (job.company || 'Chưa phân loại').trim();
+        const dedupKey = (job.jobId || job.internalId).trim().toLowerCase();
+        if (!map.has(comp)) {
+          map.set(comp, { company: comp, seenIds: new Set(), total: 0, open: 0, closed: 0, deleted: 0 });
+        }
+        const entry = map.get(comp);
+        if (entry.seenIds.has(dedupKey)) return;
+        entry.seenIds.add(dedupKey);
+        entry.total += 1;
+        if (job.deleted) {
+          entry.deleted += 1;
+        } else if (job.status === 'Đóng đơn') {
+          entry.closed += 1;
+        } else {
+          entry.open += 1;
+        }
+      });
+
+      const rows = Array.from(map.values()).sort((a, b) => b.total - a.total);
+      const sumTotal = rows.reduce((s, r) => s + r.total, 0);
+      const sumOpen = rows.reduce((s, r) => s + r.open, 0);
+      const sumClosed = rows.reduce((s, r) => s + r.closed, 0);
+      const sumDeleted = rows.reduce((s, r) => s + r.deleted, 0);
+
+      document.getElementById('statsOverviewCards').innerHTML = `
+        <div class="p-3.5 rounded-xl bg-slate-100 border border-slate-200">
+          <div class="text-xs text-slate-500 font-medium">Tổng mã đơn (khử trùng)</div>
+          <div class="text-xl font-bold text-slate-900 mt-1">${sumTotal}</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200">
+          <div class="text-xs text-emerald-700 font-medium">Đang tuyển</div>
+          <div class="text-xl font-bold text-emerald-800 mt-1">${sumOpen}</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-red-50 border border-red-200">
+          <div class="text-xs text-red-600 font-medium">Đã đóng đơn</div>
+          <div class="text-xl font-bold text-red-700 mt-1">${sumClosed}</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200">
+          <div class="text-xs text-amber-700 font-medium">Đã xóa mềm</div>
+          <div class="text-xl font-bold text-amber-800 mt-1">${sumDeleted}</div>
+        </div>
+      `;
+
+      document.getElementById('statsCompanyTableBody').innerHTML = rows.map(r => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-3 px-4 font-bold text-slate-900">${escapeHtml(r.company)}</td>
+          <td class="py-3 px-4 text-center font-semibold">${r.total}</td>
+          <td class="py-3 px-4 text-center font-bold text-emerald-700">${r.open}</td>
+          <td class="py-3 px-4 text-center font-bold text-red-600">${r.closed}</td>
+          <td class="py-3 px-4 text-center text-slate-500">${r.deleted}</td>
+          <td class="py-3 px-4 text-right">
+            <button data-company="${escapeHtml(r.company)}" onclick="selectCompanyStats(this.getAttribute('data-company'))" class="px-2.5 py-1 rounded bg-slate-800 text-white text-[11px] font-semibold hover:bg-slate-700">
+              Lọc xem đơn
+            </button>
+          </td>
+        </tr>
+      `).join('');
+
+      openModal('statsModal');
+    }
+
+    function selectCompanyStats(companyName) {
+      document.getElementById('filterCompany').value = companyName;
+      document.getElementById('filterStatus').value = 'ACTIVE_ALL';
+      closeModal('statsModal');
+      renderJobs();
+    }
+
+    /* ================= SUPABASE SYNC & DIAGNOSTICS ================= */
+    function getSupabaseConfig() {
+      try {
+        const raw = localStorage.getItem(SB_CONFIG_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return {
+            url: (parsed.url || DEFAULT_SB_CONFIG.url).replace(/\/+$/, ''),
+            key: parsed.key || DEFAULT_SB_CONFIG.key,
+            table: parsed.table || DEFAULT_SB_CONFIG.table,
+            autoPush: parsed.autoPush !== undefined ? Boolean(parsed.autoPush) : true,
+            autoPull: parsed.autoPull !== undefined ? Boolean(parsed.autoPull) : true
+          };
+        }
+      } catch (e) {}
+      return { ...DEFAULT_SB_CONFIG };
+    }
+
+    function updateSupabaseBadge(stateText, colorClass = 'bg-amber-500') {
+      const badge = document.getElementById('supabaseStatusBadge');
+      if (!badge) return;
+      badge.innerHTML = `<span class="w-2 h-2 rounded-full ${colorClass}"></span><span>${escapeHtml(stateText)}</span>`;
+    }
+
+    function openSupabaseModal() {
+      if (!isAdmin) {
+        handleAdminAuthClick();
+        return;
+      }
+      const cfg = getSupabaseConfig();
+      document.getElementById('sbUrlInput').value = cfg.url;
+      document.getElementById('sbKeyInput').value = cfg.key;
+      document.getElementById('sbTableInput').value = cfg.table || 'jobs';
+      document.getElementById('sbAutoPushCheck').checked = cfg.autoPush;
+      document.getElementById('sbAutoPullCheck').checked = cfg.autoPull;
+      openModal('supabaseModal');
+    }
+
+    function saveSupabaseConfig() {
+      const cfg = {
+        url: document.getElementById('sbUrlInput').value.trim().replace(/\/+$/, ''),
+        key: document.getElementById('sbKeyInput').value.trim(),
+        table: document.getElementById('sbTableInput').value.trim() || 'jobs',
+        autoPush: document.getElementById('sbAutoPushCheck').checked,
+        autoPull: document.getElementById('sbAutoPullCheck').checked
+      };
+      localStorage.setItem(SB_CONFIG_KEY, JSON.stringify(cfg));
+      if (cfg.url && cfg.key) {
+        updateSupabaseBadge(`Supabase: Đã cấu hình (${cfg.table})`, 'bg-sky-500');
+      } else {
+        updateSupabaseBadge('Supabase: Chưa kết nối (Local)', 'bg-amber-500');
+      }
+      showToast('Đã lưu cấu hình Supabase.');
+    }
+
+    async function testSupabaseConnection() {
+      saveSupabaseConfig();
+      const cfg = getSupabaseConfig();
+      const diagMsg = document.getElementById('sbDiagnosticMsg');
+
+      if (!cfg.url || !cfg.key) {
+        diagMsg.innerHTML = '<span class="text-red-600 font-semibold">❌ Thiếu Project URL hoặc Anon Key.</span>';
+        return;
+      }
+
+      diagMsg.textContent = 'Đang kiểm tra kết nối tới ' + cfg.url + '...';
+      try {
+        const res = await fetch(`${cfg.url}/rest/v1/${encodeURIComponent(cfg.table)}?select=internal_id&limit=1`, {
+          method: 'GET',
+          headers: {
+            apikey: cfg.key,
+            Authorization: 'Bearer ' + cfg.key
+          }
+        });
+
+        if (res.ok) {
+          diagMsg.innerHTML = `<span class="text-emerald-700 font-semibold">✅ Kết nối thành công! Bảng "${escapeHtml(cfg.table)}" hoạt động tốt.</span>`;
+          updateSupabaseBadge(`Supabase: Đã kết nối (${cfg.table})`, 'bg-emerald-500');
+        } else {
+          const errText = await res.text();
+          diagMsg.innerHTML = `<span class="text-red-600 font-semibold">❌ Lỗi HTTP ${res.status}:</span> ${escapeHtml(errText || 'Kiểm tra lại tên bảng hoặc RLS Policy.')}`;
+          updateSupabaseBadge(`Supabase: Lỗi ${res.status}`, 'bg-red-500');
+        }
+      } catch (e) {
+        diagMsg.innerHTML = `<span class="text-red-600 font-semibold">❌ Không thể kết nối mạng/CORS:</span> ${escapeHtml(e.message)}`;
+        updateSupabaseBadge('Supabase: Mất kết nối', 'bg-red-500');
+      }
+    }
+
+    function mapJobToDbRow(job) {
+      return {
+        internal_id: job.internalId,
+        company: job.company || '',
+        job_id: job.jobId || '',
+        industry_vi: job.industryVi || '',
+        industry_jp: job.industryJp || '',
+        location: job.location || '',
+        status: job.status || 'Đang tuyển',
+        quantity: job.quantity || '',
+        work_vi: job.workVi || '',
+        work_jp: job.workJp || '',
+        salary_vi: job.salaryVi || '',
+        salary_jp: job.salaryJp || '',
+        bonus_vi: job.bonusVi || '',
+        bonus_jp: job.bonusJp || '',
+        housing: job.housing || 'UNKNOWN',
+        nationality: job.nationality || '',
+        gender: job.gender || 'BOTH',
+        worktime_vi: job.workTimeVi || '',
+        worktime_jp: job.workTimeJp || '',
+        holiday_vi: job.holidayVi || '',
+        holiday_jp: job.holidayJp || '',
+        jpreq_vi: job.jpReqVi || '',
+        jpreq_jp: job.jpReqJp || '',
+        expreq_vi: job.expReqVi || '',
+        expreq_jp: job.expReqJp || '',
+        deleted: Boolean(job.deleted),
+        deleted_at: job.deletedAt || null,
+        updated_at: job.updatedAt || new Date().toISOString()
+      };
+    }
+
+    function mapDbRowToJob(row) {
+      return {
+        internalId: row.internal_id,
+        company: row.company || '',
+        jobId: row.job_id || '',
+        industryVi: row.industry_vi || '',
+        industryJp: row.industry_jp || '',
+        location: row.location || '',
+        status: row.status || 'Đang tuyển',
+        quantity: row.quantity || '',
+        workVi: row.work_vi || '',
+        workJp: row.work_jp || '',
+        salaryVi: row.salary_vi || '',
+        salaryJp: row.salary_jp || '',
+        bonusVi: row.bonus_vi || '',
+        bonusJp: row.bonus_jp || '',
+        housing: row.housing || 'UNKNOWN',
+        nationality: row.nationality || '',
+        gender: row.gender || 'BOTH',
+        workTimeVi: row.worktime_vi || '',
+        workTimeJp: row.worktime_jp || '',
+        holidayVi: row.holiday_vi || '',
+        holidayJp: row.holiday_jp || '',
+        jpReqVi: row.jpreq_vi || '',
+        jpReqJp: row.jpreq_jp || '',
+        expReqVi: row.expreq_vi || '',
+        expReqJp: row.expreq_jp || '',
+        deleted: Boolean(row.deleted),
+        deletedAt: row.deleted_at || null,
+        updatedAt: row.updated_at || new Date().toISOString()
+      };
+    }
+
+    async function pushAllToSupabase(silent = false) {
+      const cfg = getSupabaseConfig();
+      if (!cfg.url || !cfg.key) {
+        if (!silent) openSupabaseModal();
+        return;
+      }
+
+      try {
+        const rows = jobsList.map(mapJobToDbRow);
+        const res = await fetch(`${cfg.url}/rest/v1/${encodeURIComponent(cfg.table)}?on_conflict=internal_id`, {
+          method: 'POST',
+          headers: {
+            apikey: cfg.key,
+            Authorization: 'Bearer ' + cfg.key,
+            'Content-Type': 'application/json',
+            Prefer: 'resolution=merge-duplicates,return=minimal'
+          },
+          body: JSON.stringify(rows)
+        });
+
+        if (!res.ok) {
+          const err = await res.text();
+          throw new Error(`HTTP ${res.status}: ${err}`);
+        }
+        updateSupabaseBadge(`Supabase: Đã đồng bộ (${rows.length} đơn)`, 'bg-emerald-500');
+        if (!silent) showToast(`Đã đẩy ${rows.length} đơn tuyển lên Supabase thành công!`);
+      } catch (e) {
+        updateSupabaseBadge('Supabase: Lỗi Push', 'bg-red-500');
+        if (!silent) alert('Lỗi đẩy dữ liệu lên Supabase: ' + e.message);
+      }
+    }
+
+    async function pullFromSupabase(silent = false) {
+      const cfg = getSupabaseConfig();
+      if (!cfg.url || !cfg.key) {
+        if (!silent) openSupabaseModal();
+        return;
+      }
+
+      try {
+        const res = await fetch(`${cfg.url}/rest/v1/${encodeURIComponent(cfg.table)}?select=*&order=updated_at.desc`, {
+          method: 'GET',
+          headers: {
+            apikey: cfg.key,
+            Authorization: 'Bearer ' + cfg.key
+          }
+        });
+
+        if (!res.ok) {
+          const err = await res.text();
+          throw new Error(`HTTP ${res.status}: ${err}`);
+        }
+
+        const rows = await res.json();
+        if (Array.isArray(rows) && rows.length > 0) {
+          jobsList = rows.map(mapDbRowToJob);
+          saveJobsToStorage(false);
+          renderJobs();
+          updateSupabaseBadge(`Supabase: Trực tuyến (${rows.length} đơn)`, 'bg-emerald-500');
+          if (!silent) showToast(`Đã tải ${rows.length} đơn tuyển mới nhất từ Supabase!`);
+        } else {
+          updateSupabaseBadge(`Supabase: Trực tuyến (0 đơn)`, 'bg-sky-500');
+          if (!silent) showToast('Bảng trên Supabase hiện đang trống (0 đơn).');
+        }
+      } catch (e) {
+        updateSupabaseBadge('Supabase: Lỗi kết nối', 'bg-red-500');
+        if (!silent) alert('Lỗi tải dữ liệu từ Supabase: ' + e.message);
+      }
+    }
+
+    /* ================= JSON BACKUP ================= */
+    function exportJsonBackup() {
+      const blob = new Blob([JSON.stringify(jobsList, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `minami-kyujin-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function importJsonBackup(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!Array.isArray(parsed)) throw new Error('File JSON không đúng định dạng mảng đơn tuyển.');
+          jobsList = parsed;
+          saveJobsToStorage(true);
+          renderJobs();
+          showToast(`Đã khôi phục ${jobsList.length} đơn từ file JSON.`);
+        } catch (err) {
+          alert('Lỗi đọc file JSON: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    /* ================= INIT ================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      isAdmin = sessionStorage.getItem(ADMIN_SESSION_KEY) === '1';
+      loadJobsFromStorage();
+      updateFilterOptions();
+      syncAdminUI();
+      setupDragAndDrop();
+
+      const cfg = getSupabaseConfig();
+      if (cfg.url && cfg.key) {
+        if (cfg.autoPull) {
+          pullFromSupabase(true);
+        } else {
+          updateSupabaseBadge(`Supabase: Đã cấu hình (${cfg.table})`, 'bg-sky-500');
+        }
+      } else {
+        updateSupabaseBadge('Supabase: Chưa kết nối (Local)', 'bg-amber-500');
+      }
+    });
+  </script>
+</body>
+</html>
