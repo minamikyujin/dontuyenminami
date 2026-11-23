@@ -537,7 +537,8 @@ Có phụ cấp tăng ca theo quy định',
     }
 
     function formatMultiline(text) {
-      return escapeHtml(text || '').replace(/?
+      return escapeHtml(text || '').replace(/
+?
 /g, '<br>');
     }
 
@@ -1398,7 +1399,8 @@ Công việc: Kỹ sư phát triển hệ thống'
     }
 
     function parseSingleBlockToJob(blockText, index) {
-      const lines = String(blockText || '').split(/?
+      const lines = String(blockText || '').split(/
+?
 /).map((l) => l.trim()).filter(Boolean);
       const joinAll = lines.join(' | ');
       const codeMatch = joinAll.match(/(?:mã\s*đơn|id|求人id)[:\s]*([A-Za-z0-9_-]+)/i);
